@@ -13,10 +13,29 @@
   `haveIngredients: string[]`, `servings: number`
 - **副作用**: 画面遷移毎に `window.scrollTo(top)`。検索成功時に `addRecipesToHistory()` を呼び出し
   localStorageへ表示履歴を保存
+- **レイアウト**: ルート要素はFragment。`Header`は全画面で常時表示、`Hero`は`view === "input"`のときのみ
+  表示し、それ以外のコンテンツ（食材入力・一覧・詳細・フッター）は`.app`（max-width 720px）でラップする
+
+## Header（`client/src/components/Header.tsx`）
+
+- **用途**: 全画面共通のブランドヘッダー（白背景・高さ72px・sticky）。ロゴ＋「Sustainable Recipe Maker」表示
+- **Props**: `{ onLogoClick: () => void }`
+- **利用画面**: 全画面
+- **備考**: クリックで`onLogoClick`を呼び出し、`App.tsx`の`handleGoHome`経由で入力画面に戻る
+  （旧`.app-title-btn`と同等の「ロゴクリックでホーム復帰」機能を引き継ぐ）
+
+## Hero（`client/src/components/Hero.tsx`）
+
+- **用途**: 入力画面のみに表示するヒーローセクション。背景写真＋半透明オーバーレイ＋見出し
+  「今日の夕飯、もう迷わない」＋サブテキスト
+- **Props**: なし
+- **利用画面**: 画面①（`view === "input"`）のみ
+- **画像**: `client/public/assets/images/hero.png`（差し替え可能。ユーザー提供の写真を使用）
 
 ## IngredientInput（`client/src/components/IngredientInput.tsx`）
 
-- **用途**: 画面①（食材・ジャンル・人数の入力フォーム）
+- **用途**: 画面①（食材・ジャンル・人数の入力フォーム）。全体を白カード（角丸20px・shadow）でラップし、
+  タイトル「冷蔵庫にある食材を入力してください」を表示（UI刷新。入力ロジック自体は無変更）
 - **Props**: `{ loading: boolean; onSubmit: (ingredients: string[], cuisine: Cuisine, servings: number) => void }`
 - **利用画面**: 画面①（`view === "input"`）
 - **内部state**: 選択中食材（`Set<string>`。定番+自由入力+写真検出をすべて同じSetで管理）、自由入力テキスト、
@@ -26,7 +45,8 @@
 
 ## CommonIngredients（`client/src/components/CommonIngredients.tsx`）
 
-- **用途**: 定番食材（卵・乳製品/主食/野菜/肉・魚の4カテゴリ）のチェックボックス一覧を表示
+- **用途**: 定番食材（卵・乳製品/主食/野菜/肉・魚の4カテゴリ、計26種）のチェックボックス一覧を表示。
+  各食材名の先頭に絵文字アイコンを付与（`INGREDIENT_ICONS`対応表、一致しない食材はアイコンなし）
 - **Props**: `{ selected: Set<string>; onToggle: (name: string) => void }`
 - **利用画面**: 画面①（`IngredientInput` の子として）
 - **データソース**: `client/src/commonIngredients.ts` の `COMMON_INGREDIENTS`
@@ -63,6 +83,8 @@
 
 ```
 App
+├── Header (全画面共通)
+├── Hero (画面①のみ)
 ├── IngredientInput (画面①)
 │   ├── CommonIngredients
 │   └── PhotoUpload

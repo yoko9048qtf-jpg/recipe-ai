@@ -36,6 +36,10 @@
 - `client/src/components/` にUIコンポーネント、`client/src/utils/` にDOM/ブラウザAPIに依存する
   ロジック（localStorage操作等）を切り出す
 - `server/utils/` にはExpressルートから独立して再利用可能な純粋関数（例: Fisher-Yates Shuffle）を配置する
+- 差し替え可能な画像アセット（ヒーロー背景・ロゴ等）は `client/public/assets/images/` に配置し、
+  コンポーネントからは固定パス（例: `/assets/images/hero.png`）で参照する。ファイルを差し替えるだけで
+  見た目を更新できるようにする（[Header.tsx](../client/src/components/Header.tsx),
+  [Hero.tsx](../client/src/components/Hero.tsx)）
 - APIエンドポイント定義（ルーティング）は `server/app.js` に集約し、外部サービス連携（楽天API・Claude）は
   個別ファイル（`rakuten.js`, `vision.js`, `steps.js`）に分離する。ルート定義側は「呼び出し・整形・エラー処理」に徹し、
   外部通信の詳細（リトライ、ヘッダー、キャッシュ等）は各連携ファイル内に閉じる

@@ -14,7 +14,9 @@ fridge-recipe-app/
 │   ├── tsconfig.node.json      # vite.config.ts 用の tsconfig（Node環境向け）
 │   ├── package.json
 │   ├── public/
-│   │   ├── icon.svg
+│   │   ├── assets/images/     # 差し替え可能な画像アセット（UI用。ユーザー提供画像を配置）
+│   │   │   ├── hero.png       # ヒーロー背景写真
+│   │   │   └── icon.png       # ブランドロゴ・favicon・PWAアイコン
 │   │   ├── manifest.webmanifest  # PWAマニフェスト
 │   │   └── sw.js                 # Service Worker（ネットワーク優先＋簡易オフラインキャッシュ、/api配下は対象外）
 │   ├── dist/                  # ビルド成果物（.gitignore対象。`npm run build` で生成）
@@ -29,8 +31,10 @@ fridge-recipe-app/
 │       ├── utils/
 │       │   └── recipeHistory.ts # 直近表示レシピIDのlocalStorage永続化ユーティリティ（最大10件・重複排除）
 │       └── components/
-│           ├── IngredientInput.tsx   # 食材/ジャンル/人数の入力フォーム（画面①）
-│           ├── CommonIngredients.tsx # 定番食材チェックボックス群（カテゴリ別）
+│           ├── Header.tsx            # 全画面共通ヘッダー（ロゴ＋ブランド名、クリックでホームに戻る）
+│           ├── Hero.tsx              # 入力画面のみのヒーロー（背景写真＋見出し）
+│           ├── IngredientInput.tsx   # 食材/ジャンル/人数の入力フォーム（画面①、カード化済み）
+│           ├── CommonIngredients.tsx # 定番食材チェックボックス群（カテゴリ別、アイコン付き）
 │           ├── PhotoUpload.tsx       # 写真アップロード→食材自動認識
 │           ├── RecipeList.tsx        # レシピ一覧カード表示（画面②）
 │           └── RecipeDetail.tsx      # レシピ詳細・材料/手順表示・PDF/LINE共有（画面③）

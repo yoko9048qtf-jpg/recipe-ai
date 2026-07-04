@@ -20,17 +20,22 @@
 - [x] ヘッダータイトルクリックで初期画面に戻る機能（v1.1.0、コミット済み・本番反映済み）
 - [x] Vercel本番環境のByteStringエラー修正（v1.0.1、コミット済み・本番反映済み）
 - [x] プロジェクトドキュメント一式（`docs/`, `CLAUDE.md`）の作成・履歴管理基盤（changelog/decision-log/
-      development-history/version）の整備（実装済み、**コミットは承認待ち**）
+      development-history/version）の整備（v1.2.0、コミット済み・本番反映済み）
+- [x] 直近表示レシピの履歴管理（localStorage、最大10件、重複排除）と履歴除外ロジック（v1.2.0、
+      コミット済み・本番反映済み）
+- [x] Fisher-Yates Shuffleによる表示順のランダム化（v1.2.0、コミット済み・本番反映済み）
 
 ## 作業中（実装済み・コミット承認待ち）
 
-- [ ] 直近表示レシピの履歴管理（localStorage、最大10件、重複排除）と履歴除外ロジック
-  — 実装・ブラウザでの動作確認は完了。`server/app.js`, `client/src/api.ts`, `client/src/App.tsx`,
-    `server/utils/shuffle.js`, `client/src/utils/recipeHistory.ts` が未コミット
-- [ ] Fisher-Yates Shuffleによる表示順のランダム化 — 上記と同一コミット単位で承認待ち
+- [ ] トップページのUI刷新（ヘッダー/ヒーロー新設、食材入力エリアのカード化、食材ボタンのアイコン化、
+      レスポンシブ・アニメーション調整、ユーザー提供の写真・アイコン画像への差し替え）
+  — 実装・ローカルプレビューでの動作確認・型チェック・ビルドは完了。`client/src/App.tsx`,
+    `client/src/components/{Header,Hero,IngredientInput,CommonIngredients}.tsx`, `client/src/index.css`,
+    `client/index.html`, `client/public/manifest.webmanifest`, `client/public/assets/images/{hero,icon}.png`
+    が未コミット（既存のレシピ提案ロジック・API・データ構造・ルーティングは無変更）
 
-> 上記2件は `git status` で「Changes not staged」「Untracked files」として確認済み。ユーザー承認後、
-> `feat: 直近表示履歴の除外とFisher-Yatesシャッフルでレシピ提案の多様性を改善` としてコミット予定
+> `git status` で「Changes not staged」「Untracked files」として確認済み。ユーザー承認後、
+> `feat: トップページのUIをモダンな料理サービス風デザインに刷新` としてコミット予定
 > （[docs/development-history.md](./development-history.md) 参照）。
 
 ## 保留 / 制約付きで動作（意図的に対応を見送っている、または外部要因による制約）
@@ -79,7 +84,7 @@
 
 ## 優先度まとめ
 
-1. **高**: 保留中コミット（履歴除外+シャッフル、ドキュメント一式）の承認・実施、最低限のテスト導入
+1. **高**: 保留中コミット（トップページUI刷新）の承認・実施、最低限のテスト導入
    （特にスコアリング/正規化/履歴除外ロジック）
 2. **中**: 楽天APIキャッシュの永続化検討、静的解析（ESLint）導入
 3. **低**: 型の整理（`Recipe.id`等）、`getClient()`重複の共通化、i18n要否の判断
