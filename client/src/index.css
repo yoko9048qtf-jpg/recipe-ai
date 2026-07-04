@@ -31,6 +31,17 @@ button {
   font-family: inherit;
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .app {
   max-width: 720px;
   margin: 0 auto;
@@ -73,6 +84,106 @@ button {
   font-size: 0.9rem;
 }
 
+/* ===== サイトヘッダー（ブランディング） ===== */
+.site-header {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  padding: 0 max(20px, calc((100vw - 1100px) / 2));
+}
+.brand-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  margin: 0;
+  border-radius: 12px;
+  transition: background-color 0.15s;
+}
+.brand-btn:hover,
+.brand-btn:focus-visible {
+  background: var(--bg);
+}
+.brand-btn:active {
+  transform: scale(0.98);
+}
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  flex: 0 0 auto;
+}
+.brand-name {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  text-align: left;
+}
+.brand-line {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+/* ===== ヒーローセクション ===== */
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 420px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease-out;
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(255, 255, 255, 0.45) 30%,
+    rgba(255, 255, 255, 0.1) 52%,
+    rgba(255, 255, 255, 0) 68%
+  );
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+.hero-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1.3;
+  margin: 0 0 18px;
+  color: var(--text);
+}
+.hero-accent {
+  color: var(--accent);
+}
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: var(--text);
+  margin: 6px 0;
+  line-height: 1.6;
+}
+.hero-subtitle-strong {
+  font-weight: 700;
+}
+
 .banner-error {
   background: #fdecea;
   color: #b3261e;
@@ -94,17 +205,50 @@ button {
   line-height: 1.5;
 }
 
-/* パネル */
-.panel {
+/* 食材入力エリア全体を包む白カード */
+.input-card {
   background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
+  border-radius: 20px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  padding: 28px;
+  animation: fadeInUp 0.4s ease-out;
 }
-.panel h2 {
+.input-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+.help-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: help;
+}
+
+/* パネル（input-card内の各ステップ。カード内なので枠線・影は持たせない） */
+.panel {
+  border-bottom: 1px dashed var(--border);
+  padding: 0 0 20px;
+  margin-bottom: 20px;
+}
+.panel:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+.panel h3 {
   margin: 0 0 12px;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 /* 定番食材 */
@@ -124,17 +268,22 @@ button {
 .chip-check {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
+  gap: 6px;
+  padding: 6px 14px;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: #fafafa;
+  background: #ffffff;
   cursor: pointer;
   font-size: 0.9rem;
   user-select: none;
+  transition: border-color 0.15s, background-color 0.15s, transform 0.08s;
 }
 .chip-check input {
   display: none;
+}
+.chip-check:not(.active):not(.tag):hover {
+  border-color: var(--accent);
+  background: #f2f9f5;
 }
 .chip-check.active {
   background: var(--accent);
@@ -143,6 +292,10 @@ button {
 }
 .chip-check.tag {
   cursor: default;
+}
+.chip-icon {
+  font-size: 1.05em;
+  line-height: 1;
 }
 .chip-check .remove {
   background: none;
@@ -166,6 +319,13 @@ button {
   border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 1rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.free-input input:focus,
+.people-input input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(46, 158, 107, 0.15);
 }
 .free-input button {
   padding: 8px 16px;
@@ -270,7 +430,7 @@ button {
   bottom: 0;
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 12px 16px;
   display: flex;
   align-items: center;
@@ -290,11 +450,18 @@ button.primary {
   background: var(--accent);
   color: #fff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: 14px 32px;
+  min-height: 56px;
+  min-width: 220px;
+  border-radius: 16px;
+  font-size: 1.05rem;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
+  transition: background-color 0.15s, transform 0.08s;
+}
+button.primary:hover:not(:disabled) {
+  background: var(--accent-dark);
 }
 button.primary:disabled {
   background: #bcbcbc;
@@ -602,9 +769,6 @@ a,
 }
 
 /* 奥行きのある影 */
-.panel {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
 .recipe-card {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: box-shadow 0.15s, transform 0.08s;
@@ -652,12 +816,53 @@ button.primary,
   .tagline {
     font-size: 0.8rem;
   }
-  .panel {
-    padding: 14px;
-    border-radius: 14px;
+  .panel h3 {
+    font-size: 1rem;
   }
-  .panel h2 {
-    font-size: 1.05rem;
+
+  /* ヘッダー */
+  .site-header {
+    height: 64px;
+    padding: 0 16px;
+  }
+  .brand-logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+  .brand-line {
+    font-size: 0.92rem;
+  }
+
+  /* ヒーロー */
+  .hero {
+    min-height: 300px;
+  }
+  .hero-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0.5) 38%,
+      rgba(255, 255, 255, 0.12) 62%
+    );
+  }
+  .hero-content {
+    padding: 28px 20px;
+  }
+  .hero-title {
+    font-size: 1.7rem;
+  }
+  .hero-subtitle {
+    font-size: 0.92rem;
+  }
+
+  /* 食材入力カード */
+  .input-card {
+    padding: 18px;
+    border-radius: 16px;
+  }
+  .input-card-title {
+    font-size: 1.1rem;
   }
 
   /* レシピ一覧: 画像左・本文右の横並びカードで一覧性を上げる */

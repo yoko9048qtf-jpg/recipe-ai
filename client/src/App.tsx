@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import Header from "./components/Header";
+import Hero from "./components/Hero";
 import IngredientInput from "./components/IngredientInput";
 import RecipeList from "./components/RecipeList";
 import RecipeDetailView from "./components/RecipeDetail";
@@ -54,46 +56,44 @@ export default function App() {
   }
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <button type="button" className="app-title-btn" onClick={handleGoHome}>
-          <h1>🍳 AI×レシピメーカー</h1>
-        </button>
-        <p className="tagline">冷蔵庫の中身から、作れるレシピと足りない材料がわかります</p>
-      </header>
+    <>
+      <Header onLogoClick={handleGoHome} />
+      {view === "input" && <Hero />}
 
-      {error && <div className="banner-error">{error}</div>}
+      <div className="app">
+        {error && <div className="banner-error">{error}</div>}
 
-      <main>
-        {view === "input" && (
-          <IngredientInput loading={loading} onSubmit={handleSearch} />
-        )}
+        <main>
+          {view === "input" && (
+            <IngredientInput loading={loading} onSubmit={handleSearch} />
+          )}
 
-        {view === "list" && (
-          <div className="list-view">
-            <button type="button" className="back" onClick={() => setView("input")}>
-              ← 食材の入力に戻る
-            </button>
-            <h2>おすすめレシピ</h2>
-            {loading ? (
-              <p className="loading">読み込み中…</p>
-            ) : (
-              <RecipeList recipes={recipes} onSelect={handleSelect} />
-            )}
-          </div>
-        )}
+          {view === "list" && (
+            <div className="list-view">
+              <button type="button" className="back" onClick={() => setView("input")}>
+                ← 食材の入力に戻る
+              </button>
+              <h2>おすすめレシピ</h2>
+              {loading ? (
+                <p className="loading">読み込み中…</p>
+              ) : (
+                <RecipeList recipes={recipes} onSelect={handleSelect} />
+              )}
+            </div>
+          )}
 
-        {view === "detail" && selected && (
-          <RecipeDetailView
-            detail={selected}
-            servings={servings}
-            have={haveIngredients}
-            onBack={() => setView("list")}
-          />
-        )}
-      </main>
+          {view === "detail" && selected && (
+            <RecipeDetailView
+              detail={selected}
+              servings={servings}
+              have={haveIngredients}
+              onBack={() => setView("list")}
+            />
+          )}
+        </main>
 
-      <footer className="app-footer">レシピ: 楽天レシピ / 画像認識: Claude</footer>
-    </div>
+        <footer className="app-footer">レシピ: 楽天レシピ / 画像認識: Claude</footer>
+      </div>
+    </>
   );
 }

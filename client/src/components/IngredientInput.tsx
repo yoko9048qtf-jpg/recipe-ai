@@ -58,117 +58,129 @@ export default function IngredientInput({ loading, onSubmit }: Props) {
 
   return (
     <div className="ingredient-input">
-      <p className="pantry-note">
-        💡 調味料（醤油・味噌・塩・砂糖・酢・みりん・油・ケチャップ・マヨネーズなど）は
-        <strong>常備品</strong>として、すべてある前提で検索します。
-      </p>
+      <div className="input-card">
+        <h2 className="input-card-title">
+          冷蔵庫にある食材を入力してください
+          <span
+            className="help-icon"
+            title="チェック・自由入力・写真のいずれかで食材を教えてください"
+          >
+            ?
+          </span>
+        </h2>
 
-      <section className="panel">
-        <h2>① 今ある食材をチェック</h2>
-        <CommonIngredients selected={selected} onToggle={toggle} />
-      </section>
+        <p className="pantry-note">
+          💡 調味料（醤油・味噌・塩・砂糖・酢・みりん・油・ケチャップ・マヨネーズなど）は
+          <strong>常備品</strong>として、すべてある前提で検索します。
+        </p>
 
-      <section className="panel">
-        <h2>② その他の食材を追加</h2>
-        <div className="free-input">
-          <input
-            type="text"
-            value={text}
-            placeholder="例: ブロッコリー"
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addText();
-              }
-            }}
-          />
-          <button type="button" onClick={addText}>
-            追加
-          </button>
-        </div>
-        {freeTags.length > 0 && (
-          <div className="chips">
-            {freeTags.map((tag) => (
-              <span key={tag} className="chip-check active tag">
-                {tag}
-                <button
-                  type="button"
-                  className="remove"
-                  aria-label={`${tag} を削除`}
-                  onClick={() => toggle(tag)}
-                >
-                  ×
-                </button>
-              </span>
+        <section className="panel">
+          <h3>① 今ある食材をチェック</h3>
+          <CommonIngredients selected={selected} onToggle={toggle} />
+        </section>
+
+        <section className="panel">
+          <h3>② その他の食材を追加</h3>
+          <div className="free-input">
+            <input
+              type="text"
+              value={text}
+              placeholder="例: ブロッコリー"
+              onChange={(e) => setText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addText();
+                }
+              }}
+            />
+            <button type="button" onClick={addText}>
+              追加
+            </button>
+          </div>
+          {freeTags.length > 0 && (
+            <div className="chips">
+              {freeTags.map((tag) => (
+                <span key={tag} className="chip-check active tag">
+                  {tag}
+                  <button
+                    type="button"
+                    className="remove"
+                    aria-label={`${tag} を削除`}
+                    onClick={() => toggle(tag)}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="panel">
+          <h3>③ 写真から読み取る（任意）</h3>
+          <PhotoUpload onDetected={mergeDetected} />
+        </section>
+
+        <section className="panel">
+          <h3>④ 今日の気分は？</h3>
+          <p className="cuisine-note">選んだジャンルに合ったレシピを提案します。</p>
+          <div className="cuisine-choices">
+            {CUISINE_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                className={`cuisine-btn ${cuisine === opt.value ? "active" : ""}`}
+                aria-pressed={cuisine === opt.value}
+                onClick={() => setCuisine(opt.value)}
+              >
+                <span className="cuisine-emoji">{opt.emoji}</span>
+                <span>{opt.label}</span>
+              </button>
             ))}
           </div>
-        )}
-      </section>
+        </section>
 
-      <section className="panel">
-        <h2>③ 写真から読み取る（任意）</h2>
-        <PhotoUpload onDetected={mergeDetected} />
-      </section>
+        <section className="panel">
+          <h3>⑤ 何人分作りますか？</h3>
+          <p className="cuisine-note">材料は指定した人数分の分量で表示します。</p>
+          <div className="people-input">
+            <input
+              type="number"
+              min={1}
+              max={99}
+              inputMode="numeric"
+              value={peopleText}
+              placeholder="例: 2"
+              aria-label="作りたい人数"
+              onChange={(e) => setPeopleText(e.target.value)}
+            />
+            <span className="people-unit">人分</span>
+          </div>
+          {!peopleValid && (
+            <p className="people-question">👉 何人分の料理を作りますか？（1〜99）</p>
+          )}
+        </section>
 
-      <section className="panel">
-        <h2>④ 今日の気分は？</h2>
-        <p className="cuisine-note">選んだジャンルに合ったレシピを提案します。</p>
-        <div className="cuisine-choices">
-          {CUISINE_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              className={`cuisine-btn ${cuisine === opt.value ? "active" : ""}`}
-              aria-pressed={cuisine === opt.value}
-              onClick={() => setCuisine(opt.value)}
-            >
-              <span className="cuisine-emoji">{opt.emoji}</span>
-              <span>{opt.label}</span>
-            </button>
-          ))}
+        <div className="submit-bar">
+          <div className="selected-summary">
+            {(() => {
+              const c = CUISINE_OPTIONS.find((o) => o.value === cuisine);
+              return c ? `${c.emoji} ${c.label}` : "";
+            })()}{" "}
+            ／ {peopleValid ? `${people}人分` : "人数未入力"} ／ 選択中（
+            {selectedList.length}）:{" "}
+            {selectedList.length > 0 ? selectedList.join("、") : "まだありません"}
+          </div>
+          <button
+            type="button"
+            className="primary"
+            disabled={loading || selectedList.length === 0 || !peopleValid}
+            onClick={() => onSubmit(selectedList, cuisine, people)}
+          >
+            {loading ? "検索中…" : "レシピを探す"}
+          </button>
         </div>
-      </section>
-
-      <section className="panel">
-        <h2>⑤ 何人分作りますか？</h2>
-        <p className="cuisine-note">材料は指定した人数分の分量で表示します。</p>
-        <div className="people-input">
-          <input
-            type="number"
-            min={1}
-            max={99}
-            inputMode="numeric"
-            value={peopleText}
-            placeholder="例: 2"
-            aria-label="作りたい人数"
-            onChange={(e) => setPeopleText(e.target.value)}
-          />
-          <span className="people-unit">人分</span>
-        </div>
-        {!peopleValid && (
-          <p className="people-question">👉 何人分の料理を作りますか？（1〜99）</p>
-        )}
-      </section>
-
-      <div className="submit-bar">
-        <div className="selected-summary">
-          {(() => {
-            const c = CUISINE_OPTIONS.find((o) => o.value === cuisine);
-            return c ? `${c.emoji} ${c.label}` : "";
-          })()}{" "}
-          ／ {peopleValid ? `${people}人分` : "人数未入力"} ／ 選択中（
-          {selectedList.length}）:{" "}
-          {selectedList.length > 0 ? selectedList.join("、") : "まだありません"}
-        </div>
-        <button
-          type="button"
-          className="primary"
-          disabled={loading || selectedList.length === 0 || !peopleValid}
-          onClick={() => onSubmit(selectedList, cuisine, people)}
-        >
-          {loading ? "検索中…" : "レシピを探す"}
-        </button>
       </div>
     </div>
   );
