@@ -51,6 +51,22 @@ button {
   margin: 0;
   font-size: 1.6rem;
 }
+.app-title-btn {
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  margin: 0 auto;
+  cursor: pointer;
+  border-radius: 8px;
+  display: inline-block;
+}
+.app-title-btn:hover,
+.app-title-btn:focus-visible {
+  background: var(--panel);
+}
+.app-title-btn:active {
+  transform: scale(0.98);
+}
 .tagline {
   color: var(--muted);
   margin: 4px 0 0;

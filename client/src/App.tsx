@@ -45,10 +45,18 @@ export default function App() {
     setView("detail");
   }
 
+  // ヘッダーのタイトルを押したら初期画面（食材入力）に戻る
+  function handleGoHome() {
+    setError("");
+    setView("input");
+  }
+
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🍳 AI×レシピメーカー</h1>
+        <button type="button" className="app-title-btn" onClick={handleGoHome}>
+          <h1>🍳 AI×レシピメーカー</h1>
+        </button>
         <p className="tagline">冷蔵庫の中身から、作れるレシピと足りない材料がわかります</p>
       </header>
 
