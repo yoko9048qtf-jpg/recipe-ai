@@ -1,0 +1,17 @@
+{
+  "name": "AI×レシピメーカー",
+  "short_name": "レシピメーカー",
+  "description": "今ある食材から作れるレシピと、足りない材料がわかるアプリ",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f7f5",
+  "theme_color": "#2e9e6b",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

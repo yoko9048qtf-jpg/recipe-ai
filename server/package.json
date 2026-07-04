@@ -1,0 +1,15 @@
+{
+  "name": "fridge-recipe-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --use-system-ca --watch index.js",
+    "start": "node --use-system-ca index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.69.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2"
+  }
+}

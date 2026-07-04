@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="112" fill="#2e9e6b"/>
+  <!-- フライパン -->
+  <g>
+    <circle cx="236" cy="276" r="118" fill="#ffffff"/>
+    <circle cx="236" cy="276" r="92" fill="#f1f1ef"/>
+    <!-- 目玉焼きの黄身 -->
+    <circle cx="236" cy="276" r="40" fill="#ffc83d"/>
+    <!-- 取っ手 -->
+    <rect x="338" y="258" width="150" height="36" rx="18" fill="#ffffff" transform="rotate(-18 338 276)"/>
+  </g>
+  <!-- 湯気 -->
+  <g fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" opacity="0.9">
+    <path d="M196 150 q-22 -22 0 -44 q22 -22 0 -44"/>
+    <path d="M256 150 q-22 -22 0 -44 q22 -22 0 -44"/>
+    <path d="M316 150 q-22 -22 0 -44 q22 -22 0 -44"/>
+  </g>
+</svg>

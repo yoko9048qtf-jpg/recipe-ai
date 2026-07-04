@@ -1,0 +1,36 @@
+# 依存関係・ビルド成果物
+node_modules/
+dist/
+build/
+
+# 環境変数（秘密鍵を含むため必ず除外。.env.example はテンプレートなので対象外）
+.env
+.env.local
+.env.*.local
+
+# TypeScript ビルドキャッシュ
+*.tsbuildinfo
+
+# Vite が誤って vite.config.ts の隣に出力することがあるコンパイル済みファイル
+client/vite.config.js
+client/vite.config.d.ts
+
+# Vercel CLI のローカルキャッシュ（`vercel link`/`vercel dev` 時に生成）
+.vercel
+
+# このリポジトリ固有：Claude Code のローカルプレビュー設定（絶対パスを含むため個人環境専用）
+.claude/
+
+# ローカル環境専用ファイル（個人のデスクトップショートカット等）
+*.lnk
+
+# ログ
+*.log
+npm-debug.log*
+
+# OS・エディタ
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
