@@ -263,7 +263,8 @@ app.post("/api/recipe-detail", async (req, res) => {
     res.json({ servings, ingredients: withMissing, steps });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: errorMessage(err) });
+    // TEMP DEBUG: 原因調査のため一時的にスタックトレースを含める（調査完了後に削除する）
+    res.status(500).json({ error: errorMessage(err), _debugStack: err.stack });
   }
 });
 
