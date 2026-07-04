@@ -2,6 +2,7 @@ import express from "express";
 import { getRankings } from "./rakuten.js";
 import { detectIngredients } from "./vision.js";
 import { generateRecipeDetail } from "./steps.js";
+import { fisherYatesShuffle } from "./utils/shuffle.js";
 
 // Express アプリ本体。ローカル開発(server/index.js)・Vercel サーバーレス関数(api/index.js)
 // の両方から import して使う（`app.listen()` はここでは呼ばない）。
@@ -137,6 +138,9 @@ app.post("/api/recipes", async (req, res) => {
     const cuisine = VALID_CUISINES.includes(req.body?.cuisine)
       ? req.body.cuisine
       : "japanese";
+    // 直近表示履歴（クライアントの localStorage 由来）。表示の偏りを避けるための除外に使う
+    const history = Array.isArray(req.body?.history) ? req.body.history : [];
+    const historySet = new Set(history);
     const { primary, supplement } = GENRES[cuisine];
 
     // 選択ジャンル（primary）を優先取得。認証エラー等は伝播させる。
@@ -193,24 +197,36 @@ app.post("/api/recipes", async (req, res) => {
 
     // バリエーション確保: 補完カテゴリは1カテゴリ最大2件まで（primaryは上限なし）。
     // 同系統の料理ばかりにならないよう、主菜・麺・丼・副菜などを混ぜる効果。
+    // ここでは表示件数に絞らず、ランク順を保ったまま全件を並べ替える
+    // （この後の履歴除外・シャッフルの土台として使うため）。
     const counts = {};
-    const picked = [];
+    const capped = [];
+    const overCapped = [];
     for (const s of scored) {
       const cap = s.primary ? Infinity : 2;
       if ((counts[s.cat] || 0) < cap) {
-        picked.push(s);
+        capped.push(s);
         counts[s.cat] = (counts[s.cat] || 0) + 1;
-      }
-      if (picked.length >= RESULT_COUNT) break;
-    }
-    // 上限制限で件数が足りなければ、キャップ無視で補充して件数に近づける
-    if (picked.length < RESULT_COUNT) {
-      const chosen = new Set(picked);
-      for (const s of scored) {
-        if (picked.length >= RESULT_COUNT) break;
-        if (!chosen.has(s)) picked.push(s);
+      } else {
+        overCapped.push(s);
       }
     }
+    // 上限制限で件数が足りない場合に備え、キャップ超過分もランク順のまま末尾に保持
+    const rankedCandidates = [...capped, ...overCapped];
+
+    // 履歴除外: 直近表示していないレシピを優先し、不足する場合のみ履歴レシピで補う
+    const fresh = [];
+    const seenBefore = [];
+    for (const s of rankedCandidates) {
+      (historySet.has(s.r.recipeId) ? seenBefore : fresh).push(s);
+    }
+    const selected =
+      fresh.length >= RESULT_COUNT
+        ? fresh.slice(0, RESULT_COUNT)
+        : [...fresh, ...seenBefore.slice(0, RESULT_COUNT - fresh.length)];
+
+    // Fisher-Yates Shuffle: 選定結果（件数・ランキング品質）は変えず、表示順のみランダム化
+    const picked = fisherYatesShuffle(selected);
 
     const recipes = picked.map(({ r, items, usedCount, missing }) => ({
       id: r.recipeId,

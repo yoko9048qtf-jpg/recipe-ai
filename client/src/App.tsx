@@ -3,6 +3,7 @@ import IngredientInput from "./components/IngredientInput";
 import RecipeList from "./components/RecipeList";
 import RecipeDetailView from "./components/RecipeDetail";
 import { fetchRecipes } from "./api";
+import { addRecipesToHistory } from "./utils/recipeHistory";
 import type { Recipe, Cuisine } from "./types";
 
 type View = "input" | "list" | "detail";
@@ -29,6 +30,7 @@ export default function App() {
     try {
       const data = await fetchRecipes(ingredients, cuisine);
       setRecipes(data.recipes);
+      addRecipesToHistory(data.recipes.map((r) => r.id));
       setHaveIngredients(ingredients);
       setServings(people);
       setView("list");

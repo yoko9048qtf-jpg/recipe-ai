@@ -1,4 +1,5 @@
 import type { RecipesResponse, Cuisine, RecipeDetailData } from "./types";
+import { getRecipeHistory } from "./utils/recipeHistory";
 
 async function handle<T>(res: Response): Promise<T> {
   if (!res.ok) {
@@ -22,7 +23,7 @@ export async function fetchRecipes(
   const res = await fetch("/api/recipes", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ingredients, cuisine }),
+    body: JSON.stringify({ ingredients, cuisine, history: getRecipeHistory() }),
   });
   return handle<RecipesResponse>(res);
 }
