@@ -1,3 +1,17 @@
+// 既知の不具合の回避策: Vercel の Node.js サーバーレス関数環境では、
+// グローバルに `EdgeRuntime` という変数が定義されていることがある。
+// @anthropic-ai/sdk はプラットフォーム検知時にこれを見つけると、
+// 値を検証せずそのまま `X-Stainless-Arch: other:${EdgeRuntime}` という
+// HTTPヘッダーに埋め込む（node_modules/@anthropic-ai/sdk/internal/detect-platform.mjs）。
+// この値に非Latin1文字（例: 全角記号等）が含まれていると、
+// 「Cannot convert argument to a ByteString」という500エラーで
+// レシピ詳細生成（/api/recipe-detail）が失敗する。
+// このアプリは Edge Runtime を使わない通常の Node.js 関数なので、
+// SDKが誤検知しないよう、リクエスト処理が始まる前に無効化しておく。
+if (typeof globalThis.EdgeRuntime !== "undefined") {
+  delete globalThis.EdgeRuntime;
+}
+
 import app from "../server/app.js";
 
 // Vercel サーバーレス関数のエントリポイント。
