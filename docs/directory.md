@@ -16,7 +16,11 @@ fridge-recipe-app/
 │   ├── public/
 │   │   ├── assets/images/     # 差し替え可能な画像アセット（UI用。ユーザー提供画像を配置）
 │   │   │   ├── hero.png       # ヒーロー背景写真
-│   │   │   └── icon.png       # ブランドロゴ・favicon・PWAアイコン
+│   │   │   └── icon.png       # ブランドロゴ原本（ヘッダー表示用。実寸のまま使用）
+│   │   ├── icons/              # PWA/favicon/Apple Touch Icon用に icon.png から生成した各サイズのPNG
+│   │   │   ├── icon-192.png     # PWAマニフェスト・favicon用（192x192）
+│   │   │   ├── icon-512.png     # PWAマニフェスト・favicon用（512x512）
+│   │   │   └── apple-touch-icon.png  # iOSホーム画面追加用（180x180）
 │   │   ├── manifest.webmanifest  # PWAマニフェスト
 │   │   └── sw.js                 # Service Worker（ネットワーク優先＋簡易オフラインキャッシュ、/api配下は対象外）
 │   ├── dist/                  # ビルド成果物（.gitignore対象。`npm run build` で生成）

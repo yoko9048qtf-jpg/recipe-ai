@@ -9,6 +9,30 @@
 
 （次回以降の変更をここに追記）
 
+## v1.4.3 - 2026-07-05 (`9bdc35c`)
+
+### Added
+- ホーム画面アイコン用に、既存のブランドロゴ（`icon.png`）から生成した各サイズのPNGを追加
+  - `client/public/icons/icon-192.png`（192x192）
+  - `client/public/icons/icon-512.png`（512x512）
+  - `client/public/icons/apple-touch-icon.png`（180x180、iOSホーム画面追加用）
+  - ロゴ自体が余白込みの角丸正方形デザインのため、追加の余白付与は行わずリサイズのみで生成
+
+### Changed
+- `manifest.webmanifest` の `icons` を、1254x1254のロゴ原本1枚参照から、上記の192/512サイズのPNG（any/maskable
+  各2件、計4件）を参照する構成に変更
+- `index.html` のfavicon（`<link rel="icon">`）とApple Touch Icon（`<link rel="apple-touch-icon">`）を、
+  ロゴ原本直参照から `client/public/icons/` 配下の最適サイズ画像参照に変更。faviconは192/512の2サイズを
+  併記し、ブラウザが表示コンテキストに応じて選択できるようにした
+- ヘッダーのロゴ表示（`Header.tsx`が参照する`/assets/images/icon.png`）は変更なし（表示サイズが40x40と小さく、
+  原本を直接参照する既存方式のままで問題ないため）
+
+### Fixed
+- なし
+
+### Removed
+- なし（旧アイコン画像・旧参照は元々存在せず、削除対象なし）
+
 ## v1.4.2 - 2026-07-05 (`865cea0`)
 
 ### Fixed

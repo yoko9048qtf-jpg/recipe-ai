@@ -121,3 +121,19 @@
 - **対象機能**: `client/src/index.css`（`.contact-form-btn`）
 - **コミットメッセージ**: `fix: お問い合わせフォームボタンの視認性を改善`（`865cea0`）
 - **ステータス**: 完了（コミット・push・本番デプロイ済み）
+
+---
+
+### 2026-07-05 / v1.4.3
+
+- **実施内容**: ホーム画面アイコンを、トップページ左上で使用中のブランドロゴ画像（`icon.png`）を元にした
+  正式なマルチサイズPWAアイコンに変更
+  1. ロゴ原本（1254x1254、既に余白込みの角丸正方形デザイン）から192x192・512x512・180x180（Apple Touch Icon）
+     のPNGを生成（一時的に`sharp`を作業ディレクトリ外にインストールして使用。プロジェクトの依存関係には追加せず）
+  2. `manifest.webmanifest`の`icons`を、原本1枚参照から192/512サイズ参照（any/maskable各2件）に変更
+  3. `index.html`のfavicon・Apple Touch Iconのリンクを、原本直参照から新規生成した最適サイズ画像への参照に変更
+  4. ヘッダーのロゴ表示（40x40、`Header.tsx`）は変更なし。旧アイコン画像・旧参照は元々存在しなかったため削除対象なし
+- **対象機能**: `client/public/icons/`（新規: `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`）,
+  `client/public/manifest.webmanifest`, `client/index.html`
+- **コミットメッセージ**: `feat: ホーム画面アイコンをブランドロゴベースのマルチサイズPWAアイコンに変更`（`9bdc35c`）
+- **ステータス**: 完了（コミット・push・本番デプロイ済み）
