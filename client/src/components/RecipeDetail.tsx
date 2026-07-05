@@ -1,19 +1,27 @@
 import { useEffect, useRef, useState } from "react";
 import type { Recipe, DetailIngredient } from "../types";
 import { fetchRecipeDetail } from "../api";
+import RecipeFooterBanner from "./RecipeFooterBanner";
 
 interface Props {
   detail: Recipe;
   servings: number;
   have: string[];
   onBack: () => void;
+  onFoodLossClick: () => void;
 }
 
 function hideOnError(e: React.SyntheticEvent<HTMLImageElement>) {
   e.currentTarget.style.display = "none";
 }
 
-export default function RecipeDetailView({ detail, servings, have, onBack }: Props) {
+export default function RecipeDetailView({
+  detail,
+  servings,
+  have,
+  onBack,
+  onFoodLossClick,
+}: Props) {
   const [ingredients, setIngredients] = useState<DetailIngredient[]>([]);
   const [steps, setSteps] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -248,6 +256,8 @@ export default function RecipeDetailView({ detail, servings, have, onBack }: Pro
       <a className="rakuten-link" href={detail.url} target="_blank" rel="noreferrer">
         楽天レシピで元のレシピを見る ↗
       </a>
+
+      <RecipeFooterBanner onCtaClick={onFoodLossClick} />
     </div>
   );
 }

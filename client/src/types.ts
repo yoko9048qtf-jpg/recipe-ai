@@ -42,3 +42,6 @@ export interface RecipeDetailData {
 
 // Footerからリンクする静的ポリシーページ
 export type PolicyView = "privacy" | "terms" | "ai-policy" | "copyright" | "contact";
+
+// 食品ロス削減の特設ページ（現時点ではComing Soon。将来的に外部特集ページ等に差し替え予定）
+export type SpecialView = "food-loss";

@@ -1,8 +1,12 @@
+import FoodLossButton from "./FoodLossButton";
+import { FOOD_LOSS_ICON, FOOD_LOSS_HEADER_LABEL } from "../constants";
+
 interface Props {
   onLogoClick: () => void;
+  onFoodLossClick: () => void;
 }
 
-export default function Header({ onLogoClick }: Props) {
+export default function Header({ onLogoClick, onFoodLossClick }: Props) {
   return (
     <header className="site-header">
       <button
@@ -17,6 +21,11 @@ export default function Header({ onLogoClick }: Props) {
           <span className="brand-line">Recipe Maker</span>
         </span>
       </button>
+      <FoodLossButton
+        icon={FOOD_LOSS_ICON}
+        label={FOOD_LOSS_HEADER_LABEL}
+        onClick={onFoodLossClick}
+      />
     </header>
   );
 }

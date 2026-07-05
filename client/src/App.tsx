@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
+import FoodLossBanner from "./components/FoodLossBanner";
 import Footer from "./components/Footer";
 import IngredientInput from "./components/IngredientInput";
 import RecipeList from "./components/RecipeList";
@@ -10,15 +11,17 @@ import TermsOfService from "./components/TermsOfService";
 import AiPolicy from "./components/AiPolicy";
 import CopyrightPolicy from "./components/CopyrightPolicy";
 import ContactPage from "./components/ContactPage";
+import FoodLossPage from "./components/FoodLossPage";
 import { fetchRecipes } from "./api";
 import { addRecipesToHistory } from "./utils/recipeHistory";
-import { POLICY_PATHS } from "./constants";
-import type { Recipe, Cuisine, PolicyView } from "./types";
+import { POLICY_PATHS, FOOD_LOSS_PATH } from "./constants";
+import type { Recipe, Cuisine, PolicyView, SpecialView } from "./types";
 
-type View = "input" | "list" | "detail" | PolicyView;
+type View = "input" | "list" | "detail" | PolicyView | SpecialView;
 
 /** URLパスから対応する画面を求める（一致しなければ食材入力画面） */
 function viewFromPath(pathname: string): View {
+  if (pathname === FOOD_LOSS_PATH) return "food-loss";
   const entry = (Object.entries(POLICY_PATHS) as [PolicyView, string][]).find(
     ([, path]) => path === pathname
   );
@@ -50,9 +53,12 @@ export default function App() {
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
-  // 画面遷移とURLを同期する。ポリシーページは固有のパスを持ち、それ以外（入力/一覧/詳細）は "/" のまま
+  // 画面遷移とURLを同期する。ポリシーページ・食品ロス特設ページは固有のパスを持ち、
+  // それ以外（入力/一覧/詳細）は "/" のまま
   function navigate(next: View) {
-    const path = next in POLICY_PATHS ? POLICY_PATHS[next as PolicyView] : "/";
+    let path = "/";
+    if (next in POLICY_PATHS) path = POLICY_PATHS[next as PolicyView];
+    else if (next === "food-loss") path = FOOD_LOSS_PATH;
     if (window.location.pathname !== path) {
       window.history.pushState({}, "", path);
     }
@@ -88,9 +94,16 @@ export default function App() {
     navigate("input");
   }
 
+  // 食品ロス特設ページへの導線（ヘッダー/トップページバナー/レシピ回答ページバナーで共通）。
+  // 特設ページが未実装の間はダミー遷移（Coming Soon表示）。将来、外部の特集ページ等に
+  // 差し替える場合はこの関数の遷移方法を変えるだけでよい
+  function handleFoodLossClick() {
+    navigate("food-loss");
+  }
+
   return (
     <>
-      <Header onLogoClick={handleGoHome} />
+      <Header onLogoClick={handleGoHome} onFoodLossClick={handleFoodLossClick} />
       {view === "input" && <Hero />}
 
       <div className="app">
@@ -98,7 +111,10 @@ export default function App() {
 
         <main>
           {view === "input" && (
-            <IngredientInput loading={loading} onSubmit={handleSearch} />
+            <>
+              <FoodLossBanner onCtaClick={handleFoodLossClick} />
+              <IngredientInput loading={loading} onSubmit={handleSearch} />
+            </>
           )}
 
           {view === "list" && (
@@ -121,6 +137,7 @@ export default function App() {
               servings={servings}
               have={haveIngredients}
               onBack={() => setView("list")}
+              onFoodLossClick={handleFoodLossClick}
             />
           )}
 
@@ -129,6 +146,7 @@ export default function App() {
           {view === "ai-policy" && <AiPolicy onBack={handleGoHome} />}
           {view === "copyright" && <CopyrightPolicy onBack={handleGoHome} />}
           {view === "contact" && <ContactPage onBack={handleGoHome} />}
+          {view === "food-loss" && <FoodLossPage onBack={handleGoHome} />}
         </main>
 
         <Footer onNavigate={navigate} />
