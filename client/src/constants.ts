@@ -2,7 +2,8 @@ import type { PolicyView } from "./types";
 
 // お問い合わせフォーム（Google Forms）のURL。
 // フォームを差し替える場合はこの値だけを更新すればよい。
-export const GOOGLE_FORM_URL = "https://forms.gle/REPLACE_WITH_YOUR_FORM_ID";
+export const GOOGLE_FORM_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSexCNcZS_BFpXjUcW-9vWM8Gr42SiFVpV1WGm3NLJUV0Mcngg/viewform?usp=publish-editor";
 
 // サービス名（屋号）
 export const SERVICE_NAME = "Sustainable Recipe Maker";
