@@ -24,7 +24,8 @@ fridge-recipe-app/
 │       ├── main.tsx           # Reactエントリ。StrictModeでApp をマウントし、Service Workerを登録
 │       ├── App.tsx            # 唯一の状態保持コンポーネント。画面遷移(view)・検索条件・選択中レシピを管理
 │       ├── api.ts             # バックエンドAPI呼び出し（fetch）をまとめたモジュール
-│       ├── types.ts           # 型定義（Cuisine, Recipe, RecipesResponse, DetailIngredient, RecipeDetailData）とCUISINE_OPTIONS
+│       ├── types.ts           # 型定義（Cuisine, Recipe, RecipesResponse, DetailIngredient, RecipeDetailData, PolicyView）とCUISINE_OPTIONS
+│       ├── constants.ts       # サービス名・Google FormsのURL・ポリシーページのパス/ラベル対応表
 │       ├── commonIngredients.ts # チェックボックス表示用の定番食材リスト・初期選択食材
 │       ├── index.css          # アプリ全体のスタイル（CSS変数によるテーマ管理、Tailwind等は未使用）
 │       ├── vite-env.d.ts      # Vite クライアント型参照
@@ -33,11 +34,18 @@ fridge-recipe-app/
 │       └── components/
 │           ├── Header.tsx            # 全画面共通ヘッダー（ロゴ＋ブランド名、クリックでホームに戻る）
 │           ├── Hero.tsx              # 入力画面のみのヒーロー（背景写真＋見出し）
+│           ├── Footer.tsx            # 全画面共通フッター（ポリシーページへのリンク・外部サービスのクレジット表記）
 │           ├── IngredientInput.tsx   # 食材/ジャンル/人数の入力フォーム（画面①、カード化済み）
 │           ├── CommonIngredients.tsx # 定番食材チェックボックス群（カテゴリ別、アイコン付き）
 │           ├── PhotoUpload.tsx       # 写真アップロード→食材自動認識
 │           ├── RecipeList.tsx        # レシピ一覧カード表示（画面②）
-│           └── RecipeDetail.tsx      # レシピ詳細・材料/手順表示・PDF/LINE共有（画面③）
+│           ├── RecipeDetail.tsx      # レシピ詳細・材料/手順表示・PDF/LINE共有（画面③）
+│           ├── PolicyPage.tsx        # 静的ポリシーページ共通レイアウト（タイトル/最終更新日/本文）
+│           ├── PrivacyPolicy.tsx     # プライバシーポリシー（画面④, /privacy）
+│           ├── TermsOfService.tsx    # 利用規約（画面⑤, /terms）
+│           ├── AiPolicy.tsx          # AI利用に関する注意事項（画面⑥, /ai-policy）
+│           ├── CopyrightPolicy.tsx   # 著作権・引用ポリシー（画面⑦, /copyright）
+│           └── ContactPage.tsx       # お問い合わせ（画面⑧, /contact。Google Formsへの導線）
 │
 ├── server/                    # バックエンド（Express、素のESM JavaScript）
 │   ├── index.js               # ローカル開発専用エントリ。dotenv読込＋app.listen(8787)

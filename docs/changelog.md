@@ -9,7 +9,34 @@
 
 （次回以降の変更をここに追記）
 
-## v1.3.0 - 2026-07-05（予定・承認待ち）
+## v1.4.0 - 2026-07-05（予定・承認待ち）
+
+### Added
+- 静的ポリシーページ5種を追加し、Footerからすべての画面で遷移できるようにした
+  - プライバシーポリシー（`/privacy`）
+  - 利用規約（`/terms`）
+  - AI利用に関する注意事項（`/ai-policy`）
+  - 著作権・引用ポリシー（`/copyright`）
+  - お問い合わせ（`/contact`）: Google Formsへの導線ボタン「お問い合わせフォームはこちら」を設置。
+    メールアドレスは非表示。フォームURLは `client/src/constants.ts` の `GOOGLE_FORM_URL` で一元管理
+- 上記5ページ共通のレイアウトコンポーネント `PolicyPage`（タイトル・最終更新日・本文）
+- 全画面共通のFooterコンポーネント（ポリシーページへのリンク、楽天レシピ／Anthropic Claudeのクレジット表記）
+- ライブラリを追加しない自前の軽量ルーティング（`window.history.pushState`/`popstate`）を導入し、
+  `/privacy`等の実URLでの直接アクセス・リロード・ブラウザの戻る/進むに対応
+- `vercel.json` にSPAフォールバックのrewriteを追加（本番で上記URLへの直接アクセスに対応するため）
+
+### Changed
+- 各画面の見出し階層を `h1`（画面の主見出し）→ `h2`→`h3`→`h4` の順に整理し、Lighthouseの
+  heading-order監査に抵触しないよう修正（例: 一覧画面「おすすめレシピ」がh1、レシピカードのタイトルがh2）
+- 前回のUI刷新時に生じていた未使用CSS（旧ヘッダー由来の `.app-header`/`.app-title-btn`/`.tagline`）を削除
+
+### Fixed
+- なし
+
+### Removed
+- なし
+
+## v1.3.0 - 2026-07-05 (`fb7ab97`, `9325025`)
 
 ### Added
 - トップページ用の新規UIコンポーネント `Header`（ロゴ＋「Sustainable Recipe Maker」ブランド表示、72px、

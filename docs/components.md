@@ -5,16 +5,51 @@
 
 ## App（`client/src/App.tsx`）
 
-- **用途**: アプリ全体のルート。画面遷移（`view: "input" | "list" | "detail"`）、検索結果、選択中レシピ、
-  検索条件（食材・人数）を一元管理する唯一のstateful componentコンポーネント。
+- **用途**: アプリ全体のルート。画面遷移（`view: "input" | "list" | "detail" | PolicyView`）、URLとの同期、
+  検索結果、選択中レシピ、検索条件（食材・人数）を一元管理する唯一のstateful componentコンポーネント。
 - **Props**: なし（ルートコンポーネント）
 - **利用画面**: 全画面（`main.tsx` からマウントされる唯一のエントリ）
 - **保持するstate**: `view`, `loading`, `error`, `recipes: Recipe[]`, `selected: Recipe | null`,
   `haveIngredients: string[]`, `servings: number`
 - **副作用**: 画面遷移毎に `window.scrollTo(top)`。検索成功時に `addRecipesToHistory()` を呼び出し
-  localStorageへ表示履歴を保存
+  localStorageへ表示履歴を保存。`popstate` イベントを監視し、ブラウザの戻る/進むに画面を同期
+- **ルーティング**: `navigate(view)` がURL（`POLICY_PATHS`）とstateを同時に更新する自前の軽量ルーター
+  （詳細は [architecture.md](./architecture.md) の「状態管理・ルーティング」参照）
 - **レイアウト**: ルート要素はFragment。`Header`は全画面で常時表示、`Hero`は`view === "input"`のときのみ
-  表示し、それ以外のコンテンツ（食材入力・一覧・詳細・フッター）は`.app`（max-width 720px）でラップする
+  表示し、それ以外のコンテンツ（食材入力・一覧・詳細・ポリシーページ・フッター）は`.app`（max-width 720px）
+  でラップする
+
+## Footer（`client/src/components/Footer.tsx`）
+
+- **用途**: 全画面共通のフッター。プライバシーポリシー等5つのポリシーページへのリンク、外部サービスの
+  クレジット表記（楽天レシピ・Anthropic Claude）、コピーライトを表示
+- **Props**: `{ onNavigate: (view: PolicyView) => void }`
+- **利用画面**: 全画面
+- **備考**: リンクは実際の`<a href>`（`POLICY_PATHS`参照）。左クリックのみ`preventDefault`してSPA内遷移に
+  差し替え、中クリック/Ctrl+クリック等は標準のブラウザ動作（新規タブ等）に委ねる
+
+## PolicyPage（`client/src/components/PolicyPage.tsx`）
+
+- **用途**: 5つの静的ポリシーページ共通のレイアウト。タイトル（h1）・最終更新日・「トップに戻る」リンク・
+  本文領域を提供する
+- **Props**: `{ title: string; lastUpdated: string; onBack: () => void; children: ReactNode }`
+- **利用画面**: `PrivacyPolicy`, `TermsOfService`, `AiPolicy`, `CopyrightPolicy`, `ContactPage` から共通利用
+- **見出し構成**: ページ全体でh1（タイトル）→ 本文中の各セクションはh2、で統一
+
+## PrivacyPolicy / TermsOfService / AiPolicy / CopyrightPolicy（`client/src/components/*.tsx`）
+
+- **用途**: それぞれプライバシーポリシー・利用規約・AI利用に関する注意事項・著作権/引用ポリシーの本文
+- **Props**: `{ onBack: () => void }`
+- **利用画面**: `/privacy`, `/terms`, `/ai-policy`, `/copyright`
+- **内容の要点**: [requirements.md](./requirements.md) 5節・[decision-log.md](./decision-log.md) 参照
+
+## ContactPage（`client/src/components/ContactPage.tsx`）
+
+- **用途**: お問い合わせ内容の案内とGoogle Formsへの導線。メールアドレスは表示しない
+- **Props**: `{ onBack: () => void }`
+- **利用画面**: `/contact`
+- **備考**: フォームURLは `client/src/constants.ts` の `GOOGLE_FORM_URL`（現在プレースホルダー）を
+  `target="_blank" rel="noreferrer"` のボタンリンクとして表示
 
 ## Header（`client/src/components/Header.tsx`）
 
@@ -89,7 +124,10 @@ App
 │   ├── CommonIngredients
 │   └── PhotoUpload
 ├── RecipeList (画面②)
-└── RecipeDetailView (画面③)
+├── RecipeDetailView (画面③)
+├── PrivacyPolicy / TermsOfService / AiPolicy / CopyrightPolicy / ContactPage (画面④〜⑧)
+│   └── PolicyPage (共通レイアウト)
+└── Footer (全画面共通)
 ```
 
 いずれのコンポーネントも他のコンポーネントを跨いだ暗黙の依存（Context経由の共有等）は持たず、

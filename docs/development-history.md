@@ -55,7 +55,7 @@
 
 ---
 
-### 2026-07-05 / v1.3.0（承認待ち）
+### 2026-07-05 / v1.3.0
 
 - **実施内容**:
   1. トップページのUIをモダンな「料理サービス」風デザインに刷新
@@ -71,7 +71,33 @@
   - `client/src/App.tsx`, `IngredientInput.tsx`, `CommonIngredients.tsx`, `index.css`
   - `client/index.html`, `client/public/manifest.webmanifest`（アイコン参照）
   - `client/public/assets/images/hero.png`, `icon.png`（新規画像アセット）
+- **コミットメッセージ**:
+  - `feat: トップページのUIをモダンな料理サービス風デザインに刷新`（`fb7ab97`）
+  - `docs: UI刷新に伴うドキュメント更新`（`9325025`）
+- **ステータス**: 完了（コミット・push・本番デプロイ済み）
+
+---
+
+### 2026-07-05 / v1.4.0（承認待ち）
+
+- **実施内容**:
+  1. Web公開に向け、プライバシーポリシー・利用規約・AI利用に関する注意事項・著作権/引用ポリシー・
+     お問い合わせの5ページを追加し、Footerから全画面で遷移できるようにした
+     （① 要件確認 → ② 影響範囲整理（ルーティング手段の検討） → ③ 外部サービス（Claude API・楽天レシピAPI）
+     の利用規約・ブランドガイドラインを調査 → ④ 実装 → ⑤ 見出し階層のアクセシビリティ確認・修正 →
+     ⑥ 型チェック・ビルド・ローカルプレビューでの動作確認 の順で実施）
+  2. ライブラリを追加しない自前の軽量ルーティング（`pushState`/`popstate`）を新規導入し、
+     `vercel.json` にSPAフォールバックのrewriteを追加
+  3. 各画面の見出し階層（h1〜h4）をLighthouseのheading-order監査に適合するよう全面的に整理し、
+     UI刷新（v1.3.0）時に生じていた未使用CSSも削除
+- **対象機能**:
+  - `client/src/components/{Footer,PolicyPage,PrivacyPolicy,TermsOfService,AiPolicy,CopyrightPolicy,
+    ContactPage}.tsx`（新規）
+  - `client/src/constants.ts`（新規）、`types.ts`（`PolicyView`追加）
+  - `client/src/App.tsx`（ルーティング導入）、`Hero.tsx`/`IngredientInput.tsx`/`CommonIngredients.tsx`/
+    `RecipeList.tsx`/`RecipeDetail.tsx`（見出し階層の整理）、`index.css`
+  - `vercel.json`（SPAフォールバック追加）
 - **コミットメッセージ（提案・未実行）**:
-  - `feat: トップページのUIをモダンな料理サービス風デザインに刷新`
-  - `docs: UI刷新に伴うドキュメント更新`
+  - `feat: プライバシーポリシー等5ページを追加しFooterから遷移できるようにする`
+  - `docs: ポリシーページ追加に伴うドキュメント更新`
 - **ステータス**: 実装・動作確認・ドキュメント作成は完了。**コミット・本番デプロイはユーザー承認待ち**

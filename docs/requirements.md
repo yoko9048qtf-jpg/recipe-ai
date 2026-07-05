@@ -33,15 +33,23 @@
 
 ## 3. 画面一覧
 
-`App.tsx` の `view` state（`"input" | "list" | "detail"`）で管理される、単一ページ内の3ビュー構成。
+`App.tsx` の `view` state（`"input" | "list" | "detail" | PolicyView`）で管理される、単一ページアプリ内の
+8ビュー構成。URLパスと画面の対応は `client/src/constants.ts` の `POLICY_PATHS` を参照
+（[architecture.md](./architecture.md) の「ルーティング」参照）。
 
-| 画面 | コンポーネント | 概要 |
-|---|---|---|
-| ① 食材入力画面 | `IngredientInput`（+ `CommonIngredients`, `PhotoUpload`） | 食材・ジャンル・人数を入力して検索 |
-| ② レシピ一覧画面 | `RecipeList` | 提案されたレシピをカード一覧表示、タップで詳細へ |
-| ③ レシピ詳細画面 | `RecipeDetailView` | 材料・手順・買い物リスト・PDF/LINE共有 |
+| 画面 | パス | コンポーネント | 概要 |
+|---|---|---|---|
+| ① 食材入力画面 | `/` | `IngredientInput`（+ `CommonIngredients`, `PhotoUpload`） | 食材・ジャンル・人数を入力して検索 |
+| ② レシピ一覧画面 | `/`（遷移後の内部状態） | `RecipeList` | 提案されたレシピをカード一覧表示、タップで詳細へ |
+| ③ レシピ詳細画面 | `/`（遷移後の内部状態） | `RecipeDetailView` | 材料・手順・買い物リスト・PDF/LINE共有 |
+| ④ プライバシーポリシー | `/privacy` | `PrivacyPolicy` | 取得情報・利用目的・外部サービス利用等の説明 |
+| ⑤ 利用規約 | `/terms` | `TermsOfService` | 利用条件・禁止事項・免責事項等 |
+| ⑥ AI利用に関する注意事項 | `/ai-policy` | `AiPolicy` | AI生成コンテンツの限界・安全確認の呼びかけ |
+| ⑦ 著作権・引用ポリシー | `/copyright` | `CopyrightPolicy` | 著作権の帰属・引用条件・禁止事項 |
+| ⑧ お問い合わせ | `/contact` | `ContactPage` | Google Formsへの導線（メールアドレスは非表示） |
 
-ヘッダーのアプリタイトルをタップすると常に①へ戻る（`handleGoHome`）。
+ヘッダーのアプリタイトル（ロゴ）をタップすると常に①（`/`）へ戻る（`handleGoHome`）。
+④〜⑧はフッターの「ポリシーページ」ナビゲーションから全画面共通で遷移できる。
 
 ## 4. 業務フロー（ユーザー視点）
 
@@ -67,6 +75,15 @@
   `vercel.json` の `maxDuration: 30` はPro以上でのみ有効）
 - **リクエストボディの上限**: 写真がbase64で送られるため `express.json({ limit: "12mb" })` に拡張済み。
   ただしVercel側のプラットフォーム上限（既定約4.5MB）は超えられない（README記載の既知の制約）
+- **お問い合わせにメールアドレスを表示しない**（2026-07-05のポリシーページ追加時の要件。
+  お問い合わせはGoogle Formsのボタン導線のみ。フォームURLは `client/src/constants.ts` の
+  `GOOGLE_FORM_URL` で一元管理し、差し替え可能にしている。現在はプレースホルダーURLのため、
+  実際のGoogle FormsのURLに差し替える必要がある）
+- **アクセス解析はGoogle Analyticsを利用する前提**（プライバシーポリシーに記載。ただし本実装では
+  実際のトラッキングスクリプト（Measurement ID等）の組み込みは行っていない。導入する場合は
+  別途トラッキングコードの追加が必要 — [todo.md](./todo.md) 参照）
+- **楽天アフィリエイトは将来導入予定**（利用規約・著作権ポリシーに将来導入の可能性を明記。
+  現時点でアフィリエイトリンクを独自に追加する実装はしていない）
 
 ## 6. 非機能要件（推測）
 

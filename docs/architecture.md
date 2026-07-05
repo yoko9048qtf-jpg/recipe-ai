@@ -92,11 +92,22 @@ AI（Anthropic Claude）が指定人数分の材料・手順を生成する Web 
 詳細は [components.md](./components.md) を参照。`App.tsx` が唯一の状態保持・画面遷移コンポーネントで、
 子コンポーネントは props 経由でコールバックを受け取るだけの「表示 + ローカル入力状態」に徹している（Redux等のグローバル状態管理ライブラリは未使用）。
 
-## 6. 状態管理
+## 6. 状態管理・ルーティング
 
 - グローバル状態管理ライブラリ（Redux/Zustand/Context API等）は使用していない
-- 画面遷移・検索条件・選択中レシピは `App.tsx` の `useState` で一元管理し、`view: "input" | "list" | "detail"` で
-  単一ページ内の疑似ルーティングを行う（React Router 等のルーティングライブラリも未使用）
+- 画面遷移・検索条件・選択中レシピは `App.tsx` の `useState` で一元管理し、
+  `view: "input" | "list" | "detail" | PolicyView` で単一ページ内の画面切り替えを行う
+- **ルーティング（2026-07-05導入）**: React Router 等のライブラリは追加せず、`window.history.pushState` /
+  `popstate` を直接使った軽量な自前ルーターを `App.tsx` に実装している
+  - `POLICY_PATHS`（`client/src/constants.ts`）が `view` とURLパス（`/privacy`等）の対応表
+  - `navigate(view)` がURLの更新（該当パスがなければ `/`）と `view` state の更新を同時に行う
+  - `popstate` イベントで、ブラウザの戻る/進むボタンにもURLと画面を同期させる
+  - Footerの各リンクは実際の `<a href>` を持つため、右クリック・中クリック等の標準的なブラウザ操作を
+    妨げない（クリックイベントで `preventDefault` してSPA内遷移に差し替える）
+  - `入力/一覧/詳細` の3画面は従来どおりURLを持たない内部状態（`/` のまま）で、ポリシーページのみが
+    固有のURLを持つ
+  - 本番（Vercel）では、直接URL・リロードでもポリシーページが表示できるよう、`vercel.json` に
+    `/(.*) → /index.html` のSPAフォールバックを追加している（[deployment.md](./deployment.md) 参照）
 - 入力フォームの状態（選択食材・気分・人数など）は `IngredientInput.tsx` 内のローカル state
 - 直近表示レシピ履歴のみ、ブラウザの `localStorage`（キー: `recipeHistory`）に永続化される
   （[client/src/utils/recipeHistory.ts](../client/src/utils/recipeHistory.ts)）

@@ -94,3 +94,22 @@ Express/サーバーレスAPIという明確な分離構成（[architecture.md](
 
 - 現時点でテストコード・テスト基盤（Jest/Vitest等）は存在しない。品質担保は型チェック（`tsc -b`）と
   手動でのブラウザ動作確認に依存している（[todo.md](./todo.md) の技術的負債として記録）
+
+## 12. 見出し階層（h1〜h4）の規約
+
+- 各「画面」（`view`）につき、その画面のメインタイトルを`h1`とし、以降は`h2`→`h3`→`h4`の順で
+  1段ずつ深くする（レベルを飛ばさない）。Lighthouseの `heading-order` 監査に抵触しないための規約
+- 例: 入力画面は `Hero` の見出し（h1）→ `IngredientInput` のカードタイトル（h2）→ ①〜⑤の各セクション
+  （h3）→ `CommonIngredients` のカテゴリ見出し（h4）
+- 一覧・詳細・ポリシーページのように `Hero` を伴わない画面では、その画面自身の主見出しが `h1` になる
+  （`RecipeList`/`RecipeDetailView`/`PolicyPage` 参照）
+- 見出しタグの変更で見た目のサイズが変わらないよう、CSSでは可能な限りクラスセレクタ（`.panel h3`等）で
+  明示的に `font-size` を指定し、ブラウザのデフォルトサイズに依存しない
+
+## 13. ルーティングの規約
+
+- ルーティングライブラリ（React Router等）は追加せず、`window.history.pushState`/`popstate` を使った
+  自前の軽量ルーターで完結させる（[architecture.md](./architecture.md) 6節参照）
+- URLを持つのは静的なポリシーページ（`/privacy`等）のみ。動的な画面遷移（一覧・詳細）はURLを変えない
+- 画面遷移用のリンクは実際の `<a href>` を用い、クリックイベントで通常クリックのみ `preventDefault` して
+  SPA内遷移に差し替える（中クリック・Ctrl+クリック等の標準操作を壊さないため）
