@@ -797,18 +797,20 @@ button.primary:disabled {
 .contact-form-btn {
   display: inline-block;
   margin-top: 8px;
-  padding: 14px 28px;
+  padding: 12px 28px;
   min-height: 56px;
   line-height: 28px;
-  background: var(--accent);
-  color: #fff;
+  background: #fff;
+  color: var(--accent-dark);
+  border: 2px solid var(--accent);
   border-radius: 16px;
   font-weight: 700;
   text-decoration: none;
-  transition: background-color 0.15s;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 .contact-form-btn:hover {
-  background: var(--accent-dark);
+  background: #f2f9f5;
+  border-color: var(--accent-dark);
 }
 
 /* ===== タップ最適化・デザイン刷新（全幅共通） ===== */
