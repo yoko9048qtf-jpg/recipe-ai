@@ -5,19 +5,23 @@
 
 ## App（`client/src/App.tsx`）
 
-- **用途**: アプリ全体のルート。画面遷移（`view: "input" | "list" | "detail" | PolicyView`）、URLとの同期、
-  検索結果、選択中レシピ、検索条件（食材・人数）を一元管理する唯一のstateful componentコンポーネント。
+- **用途**: アプリ全体のルート。画面遷移（`view: "input" | "list" | "detail" | PolicyView | SpecialView`）、
+  URLとの同期、検索結果、選択中レシピ、検索条件（食材・人数）を一元管理する唯一のstateful componentコンポーネント。
 - **Props**: なし（ルートコンポーネント）
 - **利用画面**: 全画面（`main.tsx` からマウントされる唯一のエントリ）
 - **保持するstate**: `view`, `loading`, `error`, `recipes: Recipe[]`, `selected: Recipe | null`,
   `haveIngredients: string[]`, `servings: number`
 - **副作用**: 画面遷移毎に `window.scrollTo(top)`。検索成功時に `addRecipesToHistory()` を呼び出し
   localStorageへ表示履歴を保存。`popstate` イベントを監視し、ブラウザの戻る/進むに画面を同期
-- **ルーティング**: `navigate(view)` がURL（`POLICY_PATHS`）とstateを同時に更新する自前の軽量ルーター
-  （詳細は [architecture.md](./architecture.md) の「状態管理・ルーティング」参照）
-- **レイアウト**: ルート要素はFragment。`Header`は全画面で常時表示、`Hero`は`view === "input"`のときのみ
-  表示し、それ以外のコンテンツ（食材入力・一覧・詳細・ポリシーページ・フッター）は`.app`（max-width 720px）
-  でラップする
+- **ルーティング**: `navigate(view)` がURL（`POLICY_PATHS` / `FOOD_LOSS_PATH`）とstateを同時に更新する
+  自前の軽量ルーター（詳細は [architecture.md](./architecture.md) の「状態管理・ルーティング」参照）
+- **レイアウト**: ルート要素はFragment。`Header`は全画面で常時表示。`Hero`は`view === "input"`のときのみ、
+  `.app`の外側（全幅・edge-to-edge）に表示する。`FoodLossBanner`も`view === "input"`のときのみ表示するが、
+  こちらは`.app`（max-width 720px）の内側、`IngredientInput`の直前に配置し、Heroより明確に弱い
+  「カード」として視覚的に分離する（UIレイヤー設計。[decision-log.md](./decision-log.md)参照）
+- **`handleFoodLossClick`**: 食品ロス特設ページへの導線（ヘッダー/トップページバナー/レシピ詳細ページ下部
+  バナーで共通の遷移関数）。特設ページ未実装の間は`navigate("food-loss")`によるダミー遷移（Coming Soon表示）。
+  将来、外部の特集ページ等に差し替える場合はこの関数の中身を変えるだけでよい
 
 ## Footer（`client/src/components/Footer.tsx`）
 
@@ -48,16 +52,71 @@
 - **用途**: お問い合わせ内容の案内とGoogle Formsへの導線。メールアドレスは表示しない
 - **Props**: `{ onBack: () => void }`
 - **利用画面**: `/contact`
-- **備考**: フォームURLは `client/src/constants.ts` の `GOOGLE_FORM_URL`（現在プレースホルダー）を
+- **備考**: フォームURLは `client/src/constants.ts` の `GOOGLE_FORM_URL`（本番用URLに設定済み）を
   `target="_blank" rel="noreferrer"` のボタンリンクとして表示
 
 ## Header（`client/src/components/Header.tsx`）
 
-- **用途**: 全画面共通のブランドヘッダー（白背景・高さ72px・sticky）。ロゴ＋「Sustainable Recipe Maker」表示
-- **Props**: `{ onLogoClick: () => void }`
+- **用途**: 全画面共通のブランドヘッダー（白背景・高さ72px・sticky）。左側にロゴ＋「Sustainable Recipe Maker」、
+  右側に食品ロス特設ページへの導線ボタン（`FoodLossButton`）を常時表示
+- **Props**: `{ onLogoClick: () => void; onFoodLossClick: () => void }`
 - **利用画面**: 全画面
-- **備考**: クリックで`onLogoClick`を呼び出し、`App.tsx`の`handleGoHome`経由で入力画面に戻る
+- **備考**: ロゴクリックで`onLogoClick`を呼び出し、`App.tsx`の`handleGoHome`経由で入力画面に戻る
   （旧`.app-title-btn`と同等の「ロゴクリックでホーム復帰」機能を引き継ぐ）
+
+## FoodLossIcon（`client/src/components/FoodLossIcon.tsx`）
+
+- **用途**: 食品ロス導線で使うアイコン（現在は絵文字「🌱」）。差し替え可能にするための最小のラッパー
+- **Props**: `{ icon?: string; className?: string }`（`icon`省略時は`constants.ts`の`FOOD_LOSS_ICON`）
+- **利用画面**: `FoodLossButton`, `FoodLossPage`
+- **備考**: 将来、絵文字から画像/SVGアイコンに差し替える場合はこのコンポーネントの実装のみ変更すればよい
+
+## FoodLossButton（`client/src/components/FoodLossButton.tsx`）
+
+- **用途**: ヘッダー右側に常時表示する、食品ロス特設ページへの導線ボタン（ミニマルなアウトラインボタン）。
+  「アイコン＋ラベル」のセット表示が必須で、アイコン単体・ラベル省略は不可
+- **Props**: `{ icon: string; label: string; onClick: () => void }`（`icon`/`label`は必須。呼び出し側の
+  `Header.tsx`が`constants.ts`の`FOOD_LOSS_ICON`/`FOOD_LOSS_HEADER_LABEL`を渡す）
+- **利用画面**: `Header`（全画面）
+- **備考**: 640px以下でもラベルは省略せず、パディング・フォントサイズを縮小するのみ
+
+## BackgroundImage（`client/src/components/BackgroundImage.tsx`）
+
+- **用途**: 写真背景＋暗めのオーバーレイの共通構造。`FoodLossBanner`と`RecipeFooterBanner`で共用する
+- **Props**: `{ className: string; image?: string; children: ReactNode }`
+- **利用画面**: `FoodLossBanner`, `RecipeFooterBanner`
+- **備考**: `image`を渡さない場合はCSS側のグリーン系グラデーションを仮背景として表示する（写真アセット未用意の
+  ための暫定措置）。実写真が用意でき次第、`client/public/assets/images`に配置し`image` propsでパスを
+  渡すだけで差し替えられる
+
+## FoodLossBanner（`client/src/components/FoodLossBanner.tsx`）
+
+- **用途**: トップページ・ヒーロー直下に表示する、食品ロス特設ページへの導線バナー。UIレイヤー設計上
+  「Hero(最重要) > FoodLossBanner(第2導線) > RecipeFooterBanner(第3・最も控えめ)」の第2階層に位置づけ、
+  Heroとは明確に弱い表現にする
+- **Props**: `{ onCtaClick: () => void }`
+- **利用画面**: 画面①（`view === "input"`。`.app`内、`IngredientInput`の直前に配置）
+- **レイアウト**: Hero（全幅・edge-to-edge）とは異なり、`.app`（max-width 720px）内に収まる角丸カード
+  （border-radius 14px・box-shadow・薄い白枠・margin-top/bottomでHeroと視覚的に分離）として表示する
+- **文言**: `constants.ts`の`FOOD_LOSS_BANNER_TITLE` / `FOOD_LOSS_BANNER_BODY` / `FOOD_LOSS_BANNER_CTA`
+
+## RecipeFooterBanner（`client/src/components/RecipeFooterBanner.tsx`）
+
+- **用途**: レシピ詳細ページ最下部に表示する、食品ロス特設ページへの導線バナー。UIレイヤー設計上
+  3階層の中で最も控えめな第3導線（`FoodLossBanner`よりさらに高さ・余白・フォントサイズを縮小したカード。
+  `BackgroundImage`を再利用）
+- **Props**: `{ onCtaClick: () => void }`
+- **利用画面**: 画面③（`view === "detail"`。`RecipeDetailView`の内部末尾に配置）
+- **文言**: `constants.ts`の`FOOD_LOSS_RECIPE_BANNER_TITLE` / `FOOD_LOSS_RECIPE_BANNER_BODY`
+  （CTAボタン文言は`FoodLossBanner`と共通の`FOOD_LOSS_BANNER_CTA`を使用し、遷移先も同一）
+
+## FoodLossPage（`client/src/components/FoodLossPage.tsx`）
+
+- **用途**: 食品ロス特設ページ（`/food-loss`）。現時点では未実装のためComing Soon表示のみ
+- **Props**: `{ onBack: () => void }`
+- **利用画面**: `/food-loss`
+- **備考**: 将来、楽天ふるさと納税・食品ロス特集ページ等の実コンテンツに差し替える前提。ルーティング
+  （`FOOD_LOSS_PATH`）とこのページ自体は差し替え時まで残す
 
 ## Hero（`client/src/components/Hero.tsx`）
 
@@ -103,8 +162,9 @@
 
 ## RecipeDetailView（`client/src/components/RecipeDetail.tsx`）
 
-- **用途**: 画面③（レシピ詳細）。材料・不足材料（買い物リスト）・手順の表示、PDF表示、LINE共有
-- **Props**: `{ detail: Recipe; servings: number; have: string[]; onBack: () => void }`
+- **用途**: 画面③（レシピ詳細）。材料・不足材料（買い物リスト）・手順の表示、PDF表示、LINE共有、
+  最下部に食品ロス導線バナー（`RecipeFooterBanner`）を表示
+- **Props**: `{ detail: Recipe; servings: number; have: string[]; onBack: () => void; onFoodLossClick: () => void }`
 - **利用画面**: 画面③（`view === "detail"`）
 - **内部state**: `ingredients: DetailIngredient[]`, `steps: string[]`, `loading`, `error`
 - **副作用**: マウント時（`detail.id`/`title`/`servings` 変更時）に `fetchRecipeDetail()` を呼び出し。
@@ -119,14 +179,22 @@
 ```
 App
 ├── Header (全画面共通)
+│   └── FoodLossButton
+│       └── FoodLossIcon
 ├── Hero (画面①のみ)
+├── FoodLossBanner (画面①のみ)
+│   └── BackgroundImage
 ├── IngredientInput (画面①)
 │   ├── CommonIngredients
 │   └── PhotoUpload
 ├── RecipeList (画面②)
 ├── RecipeDetailView (画面③)
+│   └── RecipeFooterBanner
+│       └── BackgroundImage
 ├── PrivacyPolicy / TermsOfService / AiPolicy / CopyrightPolicy / ContactPage (画面④〜⑧)
 │   └── PolicyPage (共通レイアウト)
+├── FoodLossPage (/food-loss、Coming Soon)
+│   └── FoodLossIcon
 └── Footer (全画面共通)
 ```
 

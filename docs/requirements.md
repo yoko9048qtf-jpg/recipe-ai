@@ -30,26 +30,31 @@
    - LINEへのテキスト共有（Web Share API対応時はPDFファイル共有、非対応時はテキストリンクにフォールバック）
 7. **PWA対応**: マニフェスト・Service Worker（ネットワーク優先＋オフライン簡易キャッシュ）により、
    スマートフォンのホーム画面に追加してアプリのように利用可能
+8. **食品ロス削減 特設ページ導線**（2026-07-05追加）: ヘッダー右上の常時表示ボタン、トップページ・
+   ヒーロー直下バナー、レシピ詳細ページ下部バナーの3箇所から `/food-loss` へ誘導。特設ページ自体は
+   未実装のためComing Soon表示のみ（将来、楽天ふるさと納税・食品ロス特集ページ等に差し替え予定）
 
 ## 3. 画面一覧
 
-`App.tsx` の `view` state（`"input" | "list" | "detail" | PolicyView`）で管理される、単一ページアプリ内の
-8ビュー構成。URLパスと画面の対応は `client/src/constants.ts` の `POLICY_PATHS` を参照
-（[architecture.md](./architecture.md) の「ルーティング」参照）。
+`App.tsx` の `view` state（`"input" | "list" | "detail" | PolicyView | SpecialView`）で管理される、
+単一ページアプリ内の9ビュー構成。URLパスと画面の対応は `client/src/constants.ts` の `POLICY_PATHS` /
+`FOOD_LOSS_PATH` を参照（[architecture.md](./architecture.md) の「ルーティング」参照）。
 
 | 画面 | パス | コンポーネント | 概要 |
 |---|---|---|---|
 | ① 食材入力画面 | `/` | `IngredientInput`（+ `CommonIngredients`, `PhotoUpload`） | 食材・ジャンル・人数を入力して検索 |
 | ② レシピ一覧画面 | `/`（遷移後の内部状態） | `RecipeList` | 提案されたレシピをカード一覧表示、タップで詳細へ |
-| ③ レシピ詳細画面 | `/`（遷移後の内部状態） | `RecipeDetailView` | 材料・手順・買い物リスト・PDF/LINE共有 |
+| ③ レシピ詳細画面 | `/`（遷移後の内部状態） | `RecipeDetailView` | 材料・手順・買い物リスト・PDF/LINE共有・食品ロス導線バナー |
 | ④ プライバシーポリシー | `/privacy` | `PrivacyPolicy` | 取得情報・利用目的・外部サービス利用等の説明 |
 | ⑤ 利用規約 | `/terms` | `TermsOfService` | 利用条件・禁止事項・免責事項等 |
 | ⑥ AI利用に関する注意事項 | `/ai-policy` | `AiPolicy` | AI生成コンテンツの限界・安全確認の呼びかけ |
 | ⑦ 著作権・引用ポリシー | `/copyright` | `CopyrightPolicy` | 著作権の帰属・引用条件・禁止事項 |
 | ⑧ お問い合わせ | `/contact` | `ContactPage` | Google Formsへの導線（メールアドレスは非表示） |
+| ⑨ 食品ロス特集（Coming Soon） | `/food-loss` | `FoodLossPage` | 特設ページ未実装のため準備中表示。ヘッダー/①のバナー/③のバナーから遷移 |
 
 ヘッダーのアプリタイトル（ロゴ）をタップすると常に①（`/`）へ戻る（`handleGoHome`）。
-④〜⑧はフッターの「ポリシーページ」ナビゲーションから全画面共通で遷移できる。
+④〜⑧はフッターの「ポリシーページ」ナビゲーションから全画面共通で遷移できる。⑨へはフッターからは
+遷移できず、ヘッダー右上のボタン・①のヒーロー直下バナー・③の下部バナーの3箇所からのみ遷移する。
 
 ## 4. 業務フロー（ユーザー視点）
 

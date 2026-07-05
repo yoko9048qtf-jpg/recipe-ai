@@ -4,6 +4,84 @@
 
 ---
 
+## 2026-07-05: 食品ロス特設ページ導線は「ダミールート＋Coming Soonページ」とし、写真背景は当面CSSグラデーションで代替する
+
+**背景**
+食品ロス削減の特設ページへの導線（ヘッダー/トップページバナー/レシピ詳細ページバナー）を3箇所に追加する
+依頼だったが、特設ページ自体は「将来、楽天ふるさと納税・食品ロス特集ページ等に差し替える前提」で
+現時点では未実装。また、バナー背景も「野菜・果物・農業などの写真」を想定しつつ「仮背景でOK」という指示だった。
+
+**採用理由**
+- 遷移先はモーダルではなく実URL（`/food-loss`）を持つダミールートとした。既存のポリシーページ
+  （`/privacy`等）と同じ自前ルーティングの仕組みをそのまま流用でき、`vercel.json`のSPAフォールバックも
+  追加対応なしでカバーされるため、実装コストが最小で済む。将来の差し替え時も`navigate("food-loss")`を
+  呼んでいる`App.tsx`の`handleFoodLossClick`1箇所を変更するだけでよい
+- バナー背景は、フリー素材サイトのURLを断定的に埋め込むことをライセンス未確認のため避ける方針
+  （ヒーロー画像を自作SVGからユーザー提供写真に差し替えた際と同じ判断基準）に基づき、実写真ではなく
+  CSSのグリーン系グラデーションを仮背景として使用した。`BackgroundImage`コンポーネントは`image` propsを
+  渡した場合のみ
+  `background-image`を上書きする構造にしており、実写真が用意でき次第、ヒーロー画像と同様に
+  「ユーザーがファイルを配置→パスをpropsで渡す」だけで差し替えられる
+- CTAの遷移先・アイコンを`FoodLossIcon`/`constants.ts`に集約し、ヘッダー・両バナーの3箇所すべてが
+  同じ定数・同じ遷移関数を参照する構造にすることで、差し替え作業が1箇所で完結するようにした
+
+**不採用案**
+- モーダル表示案: 依頼文で「ダミールート or モーダル表示でもよい」とされていたが、モーダルは
+  「準備中」の伝達手段としては手軽な反面、独自のオーバーレイ/フォーカストラップ実装が新たに必要になり、
+  かつ将来の外部URL差し替え時にモーダルという表示形式自体を作り直す可能性が高いため不採用
+- 実写真素材の断定的な埋め込み案: URLを推測して埋め込むことはライセンス条件を確認できず、
+  安全ガイドライン上避けるべきため不採用
+
+**影響範囲**
+- 新規: `client/src/components/{FoodLossIcon,FoodLossButton,BackgroundImage,FoodLossBanner,
+  RecipeFooterBanner,FoodLossPage}.tsx`
+- `client/src/constants.ts`: `FOOD_LOSS_*`定数群を追加
+- `client/src/types.ts`: `SpecialView`を追加
+- `client/src/App.tsx`: `view`型に`SpecialView`を追加、`handleFoodLossClick`・`/food-loss`ルーティングを追加
+- `client/src/components/{Header,RecipeDetail}.tsx`: propsを追加し、それぞれ導線ボタン・下部バナーを表示
+- `client/src/index.css`: `--food-loss-green`系トークン、`.food-loss-*`/`.recipe-footer-banner*`/
+  `.bg-image-*`のスタイルを追加。既存の`--accent`とは意図的に別トークンとして分離
+
+---
+
+## 2026-07-05: 食品ロス導線に明確なUIレイヤー構造（Hero > FoodLossBanner > RecipeFooterBanner）を導入する
+
+**背景**
+初回実装のレビューで、(1)ヘッダーボタンのラベルが640px以下の画面でCSSにより非表示になり「アイコン＋ラベル
+必須」の要件を満たしていなかった、(2)`FoodLossBanner`がHeroと同じ全幅・edge-to-edgeのセクションとして
+実装されており、Heroに視覚的に連続して見え「別コンテンツ」として認識しづらい、(3)バナーの高さ
+（min-height 280px）がHero（420px）の約60〜70%もあり、補助導線としては強すぎる、という3点の指摘を受けた。
+
+**採用理由**
+- ヘッダーボタン: `FoodLossButton`の`icon`/`label`をoptionalから必須propsに変更し、`Header.tsx`が
+  `constants.ts`の値を明示的に渡す形にした。モバイル用の「アイコンのみに収縮する」CSSを削除し、
+  パディング・フォントサイズの縮小のみに留めることで、画面幅によらずラベルが常に表示される
+- `FoodLossBanner`: Heroとの違いを「配置場所」で作るのが最も明確という判断から、`App.tsx`で
+  `.app`（max-width 720px）の外側に置いていたのを内側（`IngredientInput`の直前）に移動した。
+  これによりHero（全幅）とFoodLossBanner（カード幅720px以内）が構造的に別レイヤーであることが
+  一目で分かるようになり、追加のCSSトリックなしで「Hero＞その他UI」の階層を実現できる
+- カード化: `border-radius`・`box-shadow`・薄い白枠・`margin-top/bottom`を追加し、`min-height`を撤廃して
+  内容に応じた高さ（実測150〜190px程度）に縮小。オーバーレイも緑系グラデーションから
+  `rgba(0,0,0,0.4)`のフラットな暗さに変更し、カード化後の小さな面積でも視認性を保った
+- `RecipeFooterBanner`は`FoodLossBanner`と同じ`BackgroundImage`・カード構造を共有しつつ、
+  フォントサイズ・パディング・CTAボタンの高さをさらに一段階小さくし、「3階層の中で最も控えめ」という
+  要件を満たした
+
+**不採用案**
+- ヘッダーボタンをモバイルでアイコンのみに保つ案: 「ラベルは省略不可」という明示的な要件に反するため不採用
+- `FoodLossBanner`を全幅のまま維持し、`padding`やフォントサイズの縮小のみで「弱さ」を表現する案:
+  Heroと同じ「全幅・edge-to-edge」という構造そのものが同格に見える最大の原因であり、サイズ調整だけでは
+  「別コンテンツ」として認識されにくいと判断し不採用
+
+**影響範囲**
+- `client/src/components/FoodLossButton.tsx`: props（`icon`/`label`を必須化）
+- `client/src/components/Header.tsx`: `FoodLossButton`への`icon`/`label`の明示的な受け渡し
+- `client/src/App.tsx`: `FoodLossBanner`の配置を`.app`の外側→内側（`IngredientInput`の直前）に変更
+- `client/src/index.css`: `.food-loss-btn`系（モバイル収縮の削除）、`.food-loss-banner`/
+  `.recipe-footer-banner`/`.bg-image-overlay`系のスタイルを全面的に調整
+
+---
+
 ## 2026-07-05: ポリシーページのルーティングはライブラリを追加せず自前実装する
 
 **背景**

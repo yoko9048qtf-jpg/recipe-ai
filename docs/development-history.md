@@ -137,3 +137,34 @@
   `client/public/manifest.webmanifest`, `client/index.html`
 - **コミットメッセージ**: `feat: ホーム画面アイコンをブランドロゴベースのマルチサイズPWAアイコンに変更`（`9bdc35c`）
 - **ステータス**: 完了（コミット・push・本番デプロイ済み）
+
+---
+
+### 2026-07-05 / v1.5.0
+
+- **実施内容**: 食品ロス削減コンセプトの導線として、特設ページ（`/food-loss`、現時点では未実装のため
+  Coming Soon表示）へのリンクUIを3箇所に追加
+  1. ヘッダー右上に常時表示の導線ボタン（🌱アイコン＋ラベル「食品ロスを減らそう」必須、`FoodLossIcon`として
+     アイコンのみ差し替え可能にコンポーネント化）
+  2. トップページ・ヒーロー直下のカード型バナー（写真背景想定。写真アセット未用意のため当面はCSSグラデーション
+     で代替し、`BackgroundImage`の`image` propsで実写真に差し替え可能な構造にした）
+  3. レシピ詳細ページ最下部のさらに控えめなカード型バナー（②と同じ`BackgroundImage`を再利用、
+     高さ・余白・フォントサイズをさらに縮小）
+  - UI文言はすべて`constants.ts`の`FOOD_LOSS_*`に集約し、遷移先（`handleFoodLossClick`）も1箇所に統一。
+    将来、外部の特集ページ等に差し替える際は定数とこの関数のみ変更すればよい設計
+  - 配色は新規デザイントークン`--food-loss-green`（#22c55e）で統一し、アプリ本体の`--accent`とは分離
+  - **レビュー指摘を受けた修正（同日中に反映）**: (a) ヘッダーボタンのラベルが640px以下でCSSにより
+    非表示になっていた問題を修正し、`icon`/`label`を`FoodLossButton`の必須propsに変更。
+    (b) UIレイヤー構造「Hero(最重要) ＞ FoodLossBanner(第2導線) ＞ RecipeFooterBanner(第3・最も控えめ)」を
+    明確化するため、`FoodLossBanner`をHeroと同じ全幅・edge-to-edge配置から`.app`内（max-width 720px）の
+    角丸カード配置に変更し、min-height撤廃・padding/フォントサイズ縮小・オーバーレイをrgba(0,0,0,0.4)の
+    フラットな暗さに変更。`RecipeFooterBanner`もさらに一段階小さいカードに調整（詳細:
+    [decision-log.md](./decision-log.md) 参照）
+- **対象機能**:
+  - 新規: `client/src/components/{FoodLossIcon,FoodLossButton,BackgroundImage,FoodLossBanner,
+    RecipeFooterBanner,FoodLossPage}.tsx`
+  - `client/src/constants.ts`（`FOOD_LOSS_*`定数群）, `types.ts`（`SpecialView`追加）
+  - `client/src/App.tsx`（ルーティング・`handleFoodLossClick`追加、`FoodLossBanner`の配置変更）,
+    `Header.tsx`/`RecipeDetail.tsx`（props追加・バナー組み込み）, `index.css`
+- **コミットメッセージ**: `feat: 食品ロス特設ページへの導線UIを3箇所に追加`（`56a5609`）
+- **ステータス**: 完了（コミット・push・本番デプロイ済み）

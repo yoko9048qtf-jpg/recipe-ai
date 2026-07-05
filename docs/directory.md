@@ -28,16 +28,22 @@ fridge-recipe-app/
 │       ├── main.tsx           # Reactエントリ。StrictModeでApp をマウントし、Service Workerを登録
 │       ├── App.tsx            # 唯一の状態保持コンポーネント。画面遷移(view)・検索条件・選択中レシピを管理
 │       ├── api.ts             # バックエンドAPI呼び出し（fetch）をまとめたモジュール
-│       ├── types.ts           # 型定義（Cuisine, Recipe, RecipesResponse, DetailIngredient, RecipeDetailData, PolicyView）とCUISINE_OPTIONS
-│       ├── constants.ts       # サービス名・Google FormsのURL・ポリシーページのパス/ラベル対応表
+│       ├── types.ts           # 型定義（Cuisine, Recipe, RecipesResponse, DetailIngredient, RecipeDetailData, PolicyView, SpecialView）とCUISINE_OPTIONS
+│       ├── constants.ts       # サービス名・Google FormsのURL・ポリシーページのパス/ラベル対応表・食品ロス導線の文言/パス
 │       ├── commonIngredients.ts # チェックボックス表示用の定番食材リスト・初期選択食材
 │       ├── index.css          # アプリ全体のスタイル（CSS変数によるテーマ管理、Tailwind等は未使用）
 │       ├── vite-env.d.ts      # Vite クライアント型参照
 │       ├── utils/
 │       │   └── recipeHistory.ts # 直近表示レシピIDのlocalStorage永続化ユーティリティ（最大10件・重複排除）
 │       └── components/
-│           ├── Header.tsx            # 全画面共通ヘッダー（ロゴ＋ブランド名、クリックでホームに戻る）
+│           ├── Header.tsx            # 全画面共通ヘッダー（ロゴ＋ブランド名＋食品ロス導線ボタン）
 │           ├── Hero.tsx              # 入力画面のみのヒーロー（背景写真＋見出し）
+│           ├── FoodLossBanner.tsx    # 入力画面のみ、ヒーロー直下の食品ロス導線バナー
+│           ├── RecipeFooterBanner.tsx # レシピ詳細ページ最下部の食品ロス導線バナー（縮小版）
+│           ├── BackgroundImage.tsx   # 写真背景＋オーバーレイの共通構造（上記2バナーで共用）
+│           ├── FoodLossButton.tsx    # ヘッダー右側の食品ロス導線ボタン
+│           ├── FoodLossIcon.tsx      # 食品ロス導線で使うアイコン（差し替え可能なラッパー）
+│           ├── FoodLossPage.tsx      # 食品ロス特集（画面⑨, /food-loss。未実装のためComing Soon表示）
 │           ├── Footer.tsx            # 全画面共通フッター（ポリシーページへのリンク・外部サービスのクレジット表記）
 │           ├── IngredientInput.tsx   # 食材/ジャンル/人数の入力フォーム（画面①、カード化済み）
 │           ├── CommonIngredients.tsx # 定番食材チェックボックス群（カテゴリ別、アイコン付き）

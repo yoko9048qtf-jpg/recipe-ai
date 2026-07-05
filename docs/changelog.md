@@ -9,6 +9,37 @@
 
 （次回以降の変更をここに追記）
 
+## v1.5.0 - 2026-07-05 (`56a5609`)
+
+### Added
+- 食品ロス削減の特設ページ（`/food-loss`）への導線を3箇所に追加（特設ページ自体は未実装のため
+  Coming Soon表示。将来、楽天ふるさと納税・食品ロス特集ページ等に差し替え予定）
+  - ヘッダー右上に常時表示する導線ボタン（`FoodLossButton`。アイコン🌱＋ラベル「食品ロスを減らそう」の
+    セット表示必須。`FoodLossIcon`として差し替え可能にコンポーネント化）
+  - トップページ・ヒーロー直下のカード型バナー（`FoodLossBanner`。タイトル「食品ロスを減らす、新しい選択。」・
+    本文・CTA「食品ロス特集を見る」）
+  - レシピ詳細ページ最下部のさらに控えめなカード型バナー（`RecipeFooterBanner`。タイトル
+    「🌱 食品ロスを減らそう」・本文。`FoodLossBanner`と同じ`BackgroundImage`構造を再利用）
+  - 新規コンポーネント: `FoodLossIcon`, `FoodLossButton`, `BackgroundImage`, `FoodLossBanner`,
+    `RecipeFooterBanner`, `FoodLossPage`
+- UI文言（タイトル・本文・CTA・アイコン・ラベル等）を`client/src/constants.ts`の`FOOD_LOSS_*`定数群に
+  集約し、後から変更・差し替えしやすい構造にした
+- デザイントークン`--food-loss-green`（#22c55e）/`--food-loss-green-dark`を追加。アプリ本体の
+  `--accent`とは意図的に分離し、食品ロス導線専用の配色として統一
+- UIレイヤー設計（Hero＞FoodLossBanner＞RecipeFooterBannerの3階層）を導入。`FoodLossBanner`を
+  Heroの全幅・edge-to-edge構造とは分離し、`.app`内（max-width 720px）に収まる角丸カード
+  （box-shadow・薄枠・margin）として配置。`RecipeFooterBanner`はさらに一段階控えめなサイズ・余白にした
+
+### Changed
+- なし（既存のレシピ提案ロジック・API・データ構造・他画面の見た目は無変更）
+
+### Fixed
+- ヘッダーの食品ロス導線ボタンで、640px以下の画面幅ではラベル「食品ロスを減らそう」がCSSにより
+  非表示になっていた問題を修正。画面幅によらず常にアイコン＋ラベルが表示されるようにした
+
+### Removed
+- なし
+
 ## v1.4.3 - 2026-07-05 (`9bdc35c`)
 
 ### Added
