@@ -27,22 +27,15 @@
 - [x] トップページのUI刷新（ヘッダー/ヒーロー新設、食材入力エリアのカード化、食材ボタンのアイコン化、
       レスポンシブ・アニメーション調整、ユーザー提供の写真・アイコン画像への差し替え）（v1.3.0、
       コミット済み・本番反映済み）
+- [x] Webサイト公開に向けたポリシーページ5種の追加（プライバシーポリシー・利用規約・AI利用に関する
+      注意事項・著作権/引用ポリシー・お問い合わせ）とFooterからのナビゲーション（v1.4.0、
+      コミット済み・本番反映済み）
+- [x] お問い合わせフォームのGoogle Forms URLを本番用に差し替え（v1.4.1、コミット済み・本番反映済み。
+      プレースホルダーは解消済み）
 
 ## 作業中（実装済み・コミット承認待ち）
 
-- [ ] Webサイト公開に向けたポリシーページ5種の追加（プライバシーポリシー・利用規約・AI利用に関する
-      注意事項・著作権/引用ポリシー・お問い合わせ）とFooterからのナビゲーション
-  — 実装・ローカルプレビューでの動作確認（5ページ遷移・戻る・直接アクセス/リロード・見出し階層）・
-    型チェック・ビルドは完了。`client/src/App.tsx`, `constants.ts`, `types.ts`,
-    `client/src/components/{Footer,PolicyPage,PrivacyPolicy,TermsOfService,AiPolicy,CopyrightPolicy,
-    ContactPage,Hero,IngredientInput,CommonIngredients,RecipeList,RecipeDetail}.tsx`, `index.css`,
-    `vercel.json`（SPAフォールバック追加）が未コミット
-  — 既存のレシピ提案ロジック・API・データ構造は無変更。ルーティングのみ、URLを持たない内部状態
-    （入力/一覧/詳細）はそのままに、5ページ分の固有パスを追加
-
-> `git status` で確認済み。ユーザー承認後、
-> `feat: プライバシーポリシー等5ページを追加しFooterから遷移できるようにする` としてコミット予定
-> （[docs/development-history.md](./development-history.md) 参照）。
+（現在なし）
 
 ## 保留 / 制約付きで動作（意図的に対応を見送っている、または外部要因による制約）
 
@@ -54,8 +47,6 @@
 - [~] Google Analyticsの実トラッキングスクリプト未導入: プライバシーポリシーには利用を明記しているが、
   実際の `gtag.js`/Measurement ID の組み込みはまだ行っていない（IDが未提供のため）。導入時は
   `index.html` へのスクリプト追加とプライバシーポリシーの整合確認が必要
-- [~] Google FormsのURLがプレースホルダー: `client/src/constants.ts` の `GOOGLE_FORM_URL` を、
-  実際に運用するGoogle FormsのURLに差し替える必要がある
 
 ## 未着手（未実装と思われる機能。推測含む）
 
