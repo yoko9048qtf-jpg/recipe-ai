@@ -9,6 +9,41 @@
 
 （次回以降の変更をここに追記）
 
+## v1.6.0 - 2026-07-06 (`a671075`)
+
+### Added
+- 食品ロス特集ページ（`/food-loss`）を実装（従来はComing Soon表示のみ）
+  - 楽天市場API連携（`server/rakutenIchiba.js`、`GET /api/food-loss-products`）。ふるさと納税の
+    「訳あり」商品を食品種類/地域/金額で絞り込み検索
+  - 商品名整形ロジック（`client/src/utils/productNameFormatter.ts`）。楽天市場の実データから
+    自動生成した辞書（`scripts/generateFoodDictionary.ts` → `client/src/data/food-dictionary/*.json`、
+    series/brands/varieties/compound-foods/processed-foods/ingredients の6カテゴリ、約3,500語）を
+    `client/src/services/dictionaryService.ts` が起動時に一度だけ読み込んで参照する
+  - 商品一覧カード（写真・ルールベースバッジ・商品名・自治体名）、詳細ポップアップ（基本情報・
+    おすすめポイント・食品ロス削減につながる理由・おすすめの食べ方・楽天市場へのCTA）
+  - `RAKUTEN_AFFILIATE_ID`（任意環境変数）: 設定するとアフィリエイトURLを利用。未設定でも動作する
+- デザインシステム共通コンポーネント（`client/src/components/common/`）: Button, Card, Badge,
+  SectionHeader, StatCard, FeatureCard, InfoCard, IconList, ImageWithFallback, CtaBanner, Modal
+- デザイントークン（角丸`--radius-*`・影`--shadow-*`・余白`--space-*`・フォントサイズ`--fs-*`）を
+  `client/src/index.css` に追加。背景色を暖色系（`#FAFAF8`系）に変更
+- `RecipeCard`（`client/src/components/RecipeCard.tsx`）を`RecipeList`から分離。写真ホバーズーム、
+  「AIおすすめ」バッジ（既存の`usedCount`最大値から算出）、カテゴリ表示を追加
+- レシピ詳細ページに関連レシピセクション（既存の検索結果を再利用、新規API呼び出しなし）、
+  買い物リストのチェックUIを追加
+- `FoodLossHero`（`client/src/components/FoodLossHero.tsx`）: `Hero`と同じ構造で`.app`の外側に
+  配置し、食品ロス特集ページのヒーロー写真を画面横幅いっぱいに表示
+
+### Changed
+- トップページ・レシピ一覧・レシピ詳細・商品カード/モーダルの見た目を、写真を主役にした
+  企業サービス品質のデザインに刷新（既存のAPI・データ構造・ルーティング・レシピ提案ロジック・
+  商品名整形ロジック・食品ロス分析ロジックは無変更）
+- 商品詳細ポップアップの「AI分析」表記を「おすすめポイント」に変更
+- PDF表示/LINE共有/楽天レシピを見る、の3ボタンを同格の見た目に統一
+- `.app`のmax-widthをデスクトップ（1024px以上）で720px→1080pxに拡張し、余白を広く活用
+
+### Removed
+- `BackgroundImage`（写真背景＋オーバーレイの共通コンポーネント）。`CtaBanner`に統合したため削除
+
 ## v1.5.0 - 2026-07-05 (`56a5609`)
 
 ### Added

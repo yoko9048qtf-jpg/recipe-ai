@@ -168,3 +168,39 @@
     `Header.tsx`/`RecipeDetail.tsx`（props追加・バナー組み込み）, `index.css`
 - **コミットメッセージ**: `feat: 食品ロス特設ページへの導線UIを3箇所に追加`（`56a5609`）
 - **ステータス**: 完了（コミット・push・本番デプロイ済み）
+
+---
+
+### 2026-07-06 / v1.6.0
+
+- **実施内容**: 食品ロス特集ページ（`/food-loss`）の実装と、全画面（トップ/レシピ一覧/レシピ詳細/
+  食品ロス特集/商品詳細ポップアップ）のUIブラッシュアップ
+  1. **食品ロス特集ページの実装**: 楽天市場API連携（`server/rakutenIchiba.js`、
+     `GET /api/food-loss-products`）で「ふるさと納税・訳あり」商品を検索。商品名整形は
+     `client/src/utils/productNameFormatter.ts` が `services/dictionaryService.ts` 経由で
+     `data/food-dictionary/*.json`（`scripts/generateFoodDictionary.ts` が楽天市場APIの実データから
+     自動生成した約3,500語の辞書。手入力ではなく再実行可能）を参照する構成にした
+  2. **UIブラッシュアップ**: `client/src/components/common/` にButton/Card/Badge/SectionHeader/
+     StatCard/FeatureCard/InfoCard/IconList/ImageWithFallback/CtaBanner/Modalの共通コンポーネントを新設し、
+     角丸・影・余白・フォントサイズのデザイントークンを`index.css`に追加。Oisix/食べチョク等を参考にした
+     写真主役・温かみのあるデザインに刷新した。既存のレシピ提案API・スコアリング・カテゴリ補正・
+     ルーティング・商品名整形ロジック・食品ロス分析ロジックは無変更
+  3. **ユーザーフィードバックを受けた調整（同日中に反映）**:
+     - 提供された`foodloss-banner.png`/`foodloss-hero.png`が見出し・統計・CTAまで含む完成済みバナー
+       画像だったため、UI側のテキスト重ね表示が二重になり読みにくい問題が発生。`CtaBanner`に
+       `imageContainsText`モードを追加し、写真自体をクリック領域にする方式に変更
+     - `foodloss-hero.png`をトップページの`Hero`と同様に画面横幅いっぱいに表示してほしいとの要望を受け、
+       `FoodLossHero`コンポーネントを新設し`.app`の外側（`Hero`と同じ階層）で描画するように変更
+- **対象機能**:
+  - 新規: `server/rakutenIchiba.js`, `scripts/generateFoodDictionary.ts`,
+    `client/src/services/{dictionaryGeneratorService,dictionaryService,foodLossProductService}.ts`,
+    `client/src/data/food-dictionary/*.json`, `client/src/hooks/useFoodLossProducts.ts`,
+    `client/src/utils/{productNameFormatter,productImage,productBadges,productSuggestions,
+    recipeDisplayMeta,multiline}.ts(x)`, `client/src/components/common/*`,
+    `client/src/components/food-loss/*`, `client/src/components/{FoodLossHero,RecipeCard}.tsx`
+  - 変更: `server/app.js`（`/api/food-loss-products`追加）, `server/.env.example`
+    （`RAKUTEN_AFFILIATE_ID`任意追加）, `client/src/{App.tsx,constants.ts,types.ts,index.css}`,
+    `client/src/components/{FoodLossBanner,FoodLossPage,RecipeDetail,RecipeFooterBanner,RecipeList}.tsx`
+  - 削除: `client/src/components/BackgroundImage.tsx`（`CtaBanner`に統合）
+- **コミットメッセージ**: `feat: 食品ロス特集ページを実装し、全画面UIを企業サービス品質にブラッシュアップ`（`a671075`）
+- **ステータス**: 完了（コミット済み。push・本番デプロイはこの後実施）
