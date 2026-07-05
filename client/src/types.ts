@@ -39,3 +39,6 @@ export interface RecipeDetailData {
   ingredients: DetailIngredient[];
   steps: string[];
 }
+
+// Footerからリンクする静的ポリシーページ
+export type PolicyView = "privacy" | "terms" | "ai-policy" | "copyright" | "contact";

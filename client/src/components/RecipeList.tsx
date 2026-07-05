@@ -20,7 +20,7 @@ export default function RecipeList({ recipes, onSelect }: Props) {
         <button key={r.id} type="button" className="recipe-card" onClick={() => onSelect(r)}>
           {r.image ? <img src={r.image} alt={r.title} loading="lazy" /> : null}
           <div className="recipe-card-body">
-            <h3>{r.title}</h3>
+            <h2>{r.title}</h2>
             <div className="badges">
               <span className="badge have">使える食材 {r.usedCount}</span>
               <span className="badge missing">不足 {r.missedCount}</span>

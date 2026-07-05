@@ -159,7 +159,7 @@ export default function RecipeDetailView({ detail, servings, have, onBack }: Pro
       </button>
 
       <div ref={printRef} className="recipe-printable">
-        <h2>{detail.title}</h2>
+        <h1>{detail.title}</h1>
         {detail.image ? (
           <img
             className="detail-image no-pdf"
@@ -181,7 +181,7 @@ export default function RecipeDetailView({ detail, servings, have, onBack }: Pro
         {!loading && !error && (
           <>
             <section>
-              <h3>必要な材料（{servings}人分）</h3>
+              <h2>必要な材料（{servings}人分）</h2>
               <ul className="ingredient-list">
                 {ingredients.map((it, i) => (
                   <li key={`${it.name}-${i}`} className={it.missing ? "missing" : "have"}>
@@ -195,7 +195,7 @@ export default function RecipeDetailView({ detail, servings, have, onBack }: Pro
             </section>
 
             <section>
-              <h3>不足している材料（買い物リスト）</h3>
+              <h2>不足している材料（買い物リスト）</h2>
               {missing.length === 0 ? (
                 <p className="all-set">調味料以外はすべてそろっています！🎉</p>
               ) : (
@@ -211,7 +211,7 @@ export default function RecipeDetailView({ detail, servings, have, onBack }: Pro
             </section>
 
             <section>
-              <h3>作り方</h3>
+              <h2>作り方</h2>
               {steps.length > 0 ? (
                 <ol className="steps">
                   {steps.map((s, i) => (

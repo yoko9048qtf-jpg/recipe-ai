@@ -6,11 +6,11 @@ export default function Hero() {
     >
       <div className="hero-overlay" />
       <div className="hero-content">
-        <h2 className="hero-title">
+        <h1 className="hero-title">
           今日の夕飯、
           <br />
           <span className="hero-accent">もう迷わない</span>
-        </h2>
+        </h1>
         <p className="hero-subtitle">
           冷蔵庫にある食材から、
           <br />
