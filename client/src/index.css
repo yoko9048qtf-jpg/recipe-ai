@@ -1,21 +1,74 @@
 :root {
-  --bg: #f7f7f5;
+  /* ===== カラー（ブランドカラーは維持。背景のみ暖かみのあるオフホワイトへ） ===== */
+  --bg: #fafaf8;
+  --bg-warm-deep: #f4f1ea;
   --panel: #ffffff;
   --accent: #2e9e6b;
   --accent-dark: #248055;
+  --accent-soft: #eaf6ef;
   --missing: #e2663b;
-  --border: #e3e3df;
+  --missing-soft: #fdece3;
+  --border: #e8e6df;
   --text: #2a2a28;
-  --muted: #777;
+  --muted: #767468;
   /* 食品ロス削減 特設ページ導線専用のデザイントークン（アプリ本体の--accentとは意図的に分離） */
   --food-loss-green: #22c55e;
   --food-loss-green-dark: #16a34a;
+  --food-loss-soft: #eafbf1;
+
+  /* ===== バッジ（ルールベース生成）トーン ===== */
+  --badge-bargain-bg: #fdece3;
+  --badge-bargain-text: #b4552b;
+  --badge-popular-bg: #fff3d6;
+  --badge-popular-text: #92650a;
+  --badge-limited-bg: #fde8ec;
+  --badge-limited-text: #b23a55;
+  --badge-local-bg: #e7f3ff;
+  --badge-local-text: #1c6dbf;
+  --badge-special-bg: #fff3d6;
+  --badge-special-text: #8a5a00;
+
+  /* ===== 角丸 ===== */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* ===== 影（柔らかく統一） ===== */
+  --shadow-sm: 0 2px 10px rgba(40, 36, 20, 0.06);
+  --shadow-md: 0 8px 24px rgba(40, 36, 20, 0.08);
+  --shadow-lg: 0 18px 44px rgba(40, 36, 20, 0.14);
+
+  /* ===== 余白スケール ===== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* ===== フォントサイズ ===== */
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.85rem;
+  --fs-base: 1rem;
+  --fs-md: 1.1rem;
+  --fs-lg: 1.3rem;
+  --fs-xl: 1.7rem;
+  --fs-xxl: 2.4rem;
+
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN",
     "Yu Gothic", Meiryo, sans-serif;
 }
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -49,6 +102,13 @@ button {
   max-width: 720px;
   margin: 0 auto;
   padding: 12px 16px calc(96px + env(safe-area-inset-bottom));
+}
+/* デスクトップでは余白を広く取り、写真ギャラリー的な一覧をより活かす */
+@media (min-width: 1024px) {
+  .app {
+    max-width: 1080px;
+    padding: 28px 32px calc(96px + env(safe-area-inset-bottom));
+  }
 }
 
 /* ===== サイトヘッダー（ブランディング） ===== */
@@ -181,106 +241,6 @@ button {
   font-weight: 700;
 }
 
-/* ===== 食品ロス導線バナー（共通: BackgroundImageコンポーネント） ===== */
-/* UIレイヤー設計: Hero(最重要) > FoodLossBanner(第2導線) > RecipeFooterBanner(第3・最も控えめ)。
-   両バナーとも「カードUI」として扱い、Heroの全幅・大型表現とは明確に差をつける */
-
-/* 写真アセット未指定時の仮背景（自然・農業を連想させるグリーン系グラデーション） */
-.food-loss-banner,
-.recipe-footer-banner {
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  border: 1.5px solid rgba(255, 255, 255, 0.55);
-  background: linear-gradient(135deg, #1f7a4d 0%, #2fa866 45%, #7ecb96 100%);
-  background-size: cover;
-  background-position: center;
-}
-.bg-image-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-}
-.bg-image-content {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  color: #fff;
-}
-
-/* トップページ・ヒーロー直下バナー: Heroと明確に分離された、控えめな第2導線カード
-   （ヒーローとの間にmargin-top/bottomでスペースを作り、独立したカードとして認識できるようにする） */
-.food-loss-banner {
-  margin: 20px 0 16px;
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  animation: fadeInUp 0.5s ease-out;
-}
-.food-loss-banner .bg-image-content {
-  padding: 14px 16px;
-}
-.food-loss-banner-title {
-  margin: 0 0 8px;
-  font-size: 1.3rem;
-  font-weight: 800;
-}
-.food-loss-banner-body {
-  margin: 0 0 12px;
-  font-size: 0.85rem;
-  line-height: 1.6;
-  white-space: pre-line;
-  max-width: 560px;
-}
-.food-loss-banner-cta {
-  display: inline-flex;
-  align-items: center;
-  height: 34px;
-  padding: 0 18px;
-  background: var(--food-loss-green);
-  color: #0c3620;
-  border: none;
-  border-radius: 999px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.15s, transform 0.08s;
-}
-.food-loss-banner-cta:hover {
-  background: var(--food-loss-green-dark);
-  color: #fff;
-}
-.food-loss-banner-cta:active {
-  transform: scale(0.98);
-}
-
-/* レシピ回答ページ下部バナー: 3階層の中で最も控えめな、文脈依存の補助導線カード */
-.recipe-footer-banner {
-  margin-top: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-.recipe-footer-banner .bg-image-content {
-  padding: 12px 16px;
-}
-.recipe-footer-banner-title {
-  margin: 0 0 6px;
-  font-size: 1rem;
-  font-weight: 800;
-}
-.recipe-footer-banner-body {
-  margin: 0 0 10px;
-  font-size: 0.8rem;
-  line-height: 1.55;
-  white-space: pre-line;
-  max-width: 560px;
-}
-.recipe-footer-banner-cta {
-  height: 30px;
-  padding: 0 14px;
-  font-size: 0.76rem;
-}
-
 .banner-error {
   background: #fdecea;
   color: #b3261e;
@@ -305,9 +265,9 @@ button {
 /* 食材入力エリア全体を包む白カード */
 .input-card {
   background: var(--panel);
-  border-radius: 20px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
-  padding: 28px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-6);
   animation: fadeInUp 0.4s ease-out;
 }
 .input-card-title {
@@ -368,24 +328,26 @@ button {
   gap: 6px;
   padding: 6px 14px;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: #ffffff;
   cursor: pointer;
   font-size: 0.9rem;
   user-select: none;
-  transition: border-color 0.15s, background-color 0.15s, transform 0.08s;
+  transition: border-color 0.15s, background-color 0.15s, transform 0.08s, box-shadow 0.15s;
 }
 .chip-check input {
   display: none;
 }
 .chip-check:not(.active):not(.tag):hover {
   border-color: var(--accent);
-  background: #f2f9f5;
+  background: var(--accent-soft);
+  box-shadow: var(--shadow-sm);
 }
 .chip-check.active {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
+  box-shadow: var(--shadow-sm);
 }
 .chip-check.tag {
   cursor: default;
@@ -527,13 +489,13 @@ button {
   bottom: 0;
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 12px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-md);
 }
 .selected-summary {
   font-size: 0.85rem;
@@ -550,11 +512,12 @@ button.primary {
   padding: 14px 32px;
   min-height: 56px;
   min-width: 220px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   font-size: 1.05rem;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: var(--shadow-sm);
   transition: background-color 0.15s, transform 0.08s;
 }
 button.primary:hover:not(:disabled) {
@@ -576,58 +539,128 @@ button.primary:disabled {
   margin-bottom: 8px;
 }
 
-/* レシピ一覧 */
+/* レシピ一覧: 料理写真を主役にしたギャラリー */
 .list-view h1 {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
+  font-weight: 800;
   margin: 0 0 16px;
+}
+.recipe-list-stats {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+.recipe-list-stat {
+  flex: 1;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 14px 10px;
+  text-align: center;
+}
+.recipe-list-stat-value {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent-dark);
+}
+.recipe-list-stat-label {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin-top: 2px;
 }
 .recipe-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-5);
 }
 .recipe-card {
   text-align: left;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
   overflow: hidden;
-  cursor: pointer;
-  padding: 0;
   display: flex;
   flex-direction: column;
 }
-.recipe-card:hover {
-  border-color: var(--accent);
+.recipe-card-media {
+  position: relative;
+  overflow: hidden;
 }
-.recipe-card img {
+.recipe-card-img {
+  display: block;
   width: 100%;
-  height: 150px;
+  height: 170px;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.recipe-card:hover .recipe-card-img {
+  transform: scale(1.06);
+}
+.recipe-card-badge-ai {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+.recipe-card-badge-cat {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.92);
+}
+.recipe-card-cta-overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 10px 14px;
+  background: linear-gradient(0deg, rgba(20, 20, 16, 0.72) 0%, rgba(20, 20, 16, 0) 100%);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s, transform 0.2s;
+}
+.recipe-card:hover .recipe-card-cta-overlay {
+  opacity: 1;
+  transform: translateY(0);
 }
 .recipe-card-body {
-  padding: 12px;
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 .recipe-card-body h2 {
-  margin: 0 0 8px;
-  font-size: 1rem;
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.recipe-card-meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.recipe-card-meta-chip {
+  font-size: 0.76rem;
+  color: var(--muted);
 }
 .badges {
   display: flex;
   gap: 6px;
-  margin-bottom: 6px;
+  flex-wrap: wrap;
 }
 .badge {
-  font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
 }
 .badge.have {
-  background: #e6f4ec;
+  background: var(--accent-soft);
   color: var(--accent-dark);
 }
 .badge.missing {
-  background: #fbe9e2;
+  background: var(--missing-soft);
   color: var(--missing);
 }
 .missing-preview {
@@ -636,23 +669,48 @@ button.primary:disabled {
   margin: 0;
 }
 
-/* レシピ詳細 */
-.recipe-detail h1 {
-  margin: 4px 0 12px;
-  font-size: 1.5rem;
+/* レシピ詳細: 写真をヒーロー化 */
+.recipe-hero {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--space-4);
 }
-.detail-image {
+.recipe-hero-img {
+  display: block;
   width: 100%;
-  max-height: 320px;
+  height: 320px;
   object-fit: cover;
-  border-radius: 12px;
 }
-.meta {
+.recipe-hero-meta-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
-  gap: 16px;
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin: 10px 0;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  background: linear-gradient(0deg, rgba(20, 20, 16, 0.65) 0%, rgba(20, 20, 16, 0) 100%);
+}
+.recipe-hero-chip {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+}
+.recipe-detail-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 12px;
+}
+.recipe-detail h1 {
+  margin: 0;
+  font-size: 1.5rem;
 }
 .recipe-detail section {
   margin-top: 20px;
@@ -676,11 +734,12 @@ button.primary:disabled {
   align-items: center;
   gap: 8px;
   padding: 6px 10px;
-  border-radius: 8px;
-  background: #f1f1ef;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  color: var(--accent-dark);
 }
 .ingredient-list li.missing {
-  background: #fbe9e2;
+  background: var(--missing-soft);
   color: var(--missing);
 }
 .ing-img {
@@ -773,10 +832,38 @@ button.primary:disabled {
   list-style: none;
   padding: 0;
   margin: 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }
 .shopping-list li {
-  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
   border-bottom: 1px dashed var(--border);
+}
+.shopping-list li:last-child {
+  border-bottom: none;
+}
+.shopping-check-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.shopping-check-label input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+.shopping-list li.shopping-checked {
+  background: var(--accent-soft);
+}
+.shopping-list li.shopping-checked .shopping-check-label {
+  text-decoration: line-through;
+  color: var(--muted);
 }
 .all-set {
   color: var(--accent-dark);
@@ -790,52 +877,59 @@ button.primary:disabled {
   color: var(--accent-dark);
 }
 
-.rakuten-link {
-  display: inline-block;
-  margin-top: 4px;
-  padding: 10px 18px;
-  background: #bf0000;
-  color: #fff;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
+/* 関連レシピ */
+.recipe-related {
+  margin-top: 28px;
 }
-.rakuten-link:hover {
-  background: #a00000;
+.recipe-related-title {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+.recipe-related-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.recipe-related-item {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.recipe-related-item:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.recipe-related-item img,
+.recipe-related-img {
+  display: block;
+  width: 100%;
+  height: 84px;
+  object-fit: cover;
+}
+.recipe-related-item-title {
+  display: block;
+  padding: 8px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
-/* PDF / LINE 共有ボタン */
+/* PDF / LINE / 楽天レシピ（同等の重要度に揃える） */
 .detail-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin: 20px 0 8px;
 }
-.action-btn {
+.detail-actions > * {
   flex: 1 1 160px;
-  padding: 12px 16px;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #fff;
-  cursor: pointer;
-}
-.action-btn:disabled {
-  background: #bcbcbc;
-  cursor: not-allowed;
-}
-.pdf-btn {
-  background: var(--accent-dark);
-}
-.pdf-btn:not(:disabled):hover {
-  background: #1d6644;
-}
-.line-btn {
-  background: #06c755;
-}
-.line-btn:not(:disabled):hover {
-  background: #05a948;
 }
 
 /* PDF内に出力する出典（画面では控えめに、PDFでは可視） */
@@ -946,25 +1040,6 @@ button.primary:disabled {
   border-color: var(--accent-dark);
 }
 
-/* 食品ロス特設ページ（Coming Soon） */
-.food-loss-coming-soon {
-  text-align: center;
-  padding: 48px 20px;
-  border: 1.5px dashed var(--food-loss-green);
-  border-radius: 16px;
-  background: #f3fbf6;
-}
-.food-loss-coming-soon-icon {
-  display: block;
-  font-size: 2.4rem;
-  margin-bottom: 12px;
-}
-.food-loss-coming-soon p {
-  margin: 0;
-  color: var(--text);
-  line-height: 1.8;
-}
-
 /* ===== タップ最適化・デザイン刷新（全幅共通） ===== */
 
 /* タップ遅延の除去 */
@@ -976,21 +1051,10 @@ a,
   touch-action: manipulation;
 }
 
-/* 奥行きのある影 */
-.recipe-card {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  transition: box-shadow 0.15s, transform 0.08s;
-}
-.recipe-card:hover {
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-}
-
 /* タップフィードバック */
-.recipe-card:active,
 .cuisine-btn:active,
 .chip-check:active,
-button.primary:active,
-.action-btn:active {
+button.primary:active {
   transform: scale(0.98);
 }
 
@@ -1004,7 +1068,6 @@ button.primary:active,
 .people-input input,
 .free-input button,
 button.primary,
-.action-btn,
 .upload-btn,
 .cuisine-btn {
   min-height: 44px;
@@ -1014,6 +1077,497 @@ button.primary,
 .submit-bar {
   z-index: 15;
   padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+
+/* 食品ロス特設ページのヒーロー写真: トップページの .hero と同じく .app の外側で描画し、
+   画面横幅いっぱいに表示する（見出し・統計が写真自体にデザインされているため、
+   テキストは重ねずトリミングもしない = height:autoで全体を表示） */
+.fl-hero-fullbleed {
+  width: 100%;
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease-out;
+}
+.fl-hero-fullbleed-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-size: 3rem;
+}
+.fl-hero-fullbleed .ds-image-fallback {
+  min-height: 240px;
+}
+
+/* ===== 食品ロス特設ページ（/food-loss、LP風） ===== */
+.fl-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding-top: 20px;
+  animation: fadeInUp 0.35s ease-out;
+}
+@media (min-width: 1024px) {
+  .fl-page {
+    max-width: 920px;
+  }
+}
+
+/* スクリーンリーダー専用（視覚的には非表示。写真が見出しを兼ねるため画面には出さない） */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.fl-section {
+  margin: 32px 0;
+}
+.fl-subsection-title {
+  margin: 0 0 10px;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.fl-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+/* ① インパクトカード（写真＋統計） */
+.fl-impact-card {
+  padding: 0;
+  overflow: hidden;
+}
+.fl-impact-photo {
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  font-size: 2.6rem;
+}
+.fl-impact-stats {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+}
+.fl-impact-stats .ds-stat-card {
+  flex: 1;
+}
+
+/* ② 家庭 vs お店・企業 */
+.fl-household-split {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.fl-household-card {
+  flex: 1;
+  text-align: center;
+  border-radius: 14px;
+  padding: 18px 12px;
+}
+.fl-household-home {
+  background: #eafbf1;
+  border: 1.5px solid var(--food-loss-green);
+}
+.fl-household-business {
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+.fl-household-emoji {
+  display: block;
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+}
+.fl-household-label {
+  margin: 0 0 2px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.fl-household-percent {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--food-loss-green-dark);
+}
+.fl-household-reasons {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.fl-section-divider {
+  margin: 28px 0 0;
+  text-align: center;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--accent-dark);
+  line-height: 1.7;
+}
+
+/* SECTION2: 冷蔵庫→レシピの導線イラスト */
+.fl-flow-card {
+  text-align: center;
+}
+.fl-flow-ingredients {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.fl-flow-chip {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.fl-flow-arrow {
+  margin: 10px 0;
+  font-size: 1.3rem;
+  color: var(--food-loss-green-dark);
+}
+.fl-flow-result {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--food-loss-green-dark);
+  margin-bottom: 8px;
+}
+.fl-flow-caption {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.fl-assist-body {
+  margin: 0;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+/* SECTION3: ふるさと納税商品 */
+.fl-explain-card {
+  text-align: center;
+  padding: 0;
+  overflow: hidden;
+}
+.fl-explain-photo {
+  display: block;
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  font-size: 2.4rem;
+}
+.fl-explain-heading {
+  margin: 18px 20px 14px;
+}
+.fl-reason-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 0 20px 20px;
+}
+.fl-products-heading {
+  margin: 28px 0 14px;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.fl-filter {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 18px 20px;
+  margin-bottom: 22px;
+}
+.fl-filter-kind {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.fl-filter-kind-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.fl-filter-kind-option:has(input:checked) {
+  background: var(--food-loss-soft);
+  border-color: var(--food-loss-green);
+  color: var(--food-loss-green-dark);
+}
+.fl-filter-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+}
+.fl-filter-value-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.fl-filter-value-option:has(input:checked) {
+  background: var(--food-loss-soft);
+  border-color: var(--food-loss-green);
+  color: var(--food-loss-green-dark);
+  font-weight: 700;
+}
+.fl-filter-kind-option input,
+.fl-filter-value-option input {
+  accent-color: var(--food-loss-green);
+}
+
+.fl-product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+.fl-product-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--muted);
+  padding: 20px;
+}
+.fl-product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.fl-product-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+.fl-product-media {
+  position: relative;
+  overflow: hidden;
+}
+.fl-product-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  flex: 0 0 auto;
+  transition: transform 0.3s ease;
+}
+.fl-product-card:hover .fl-product-photo {
+  transform: scale(1.06);
+}
+.fl-product-badges {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+/* 画像未取得時の「画像準備中」プレースホルダー（正方形・サイズは実写真と共通） */
+.fl-image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-align: center;
+}
+/* 1行目: 商品名（ブランド名・品種名等）。自治体名より目立たせるため太字・やや大きめ */
+.fl-product-name {
+  margin: 0;
+  padding: 8px 10px 2px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text);
+  /* 2行固定でクランプし、商品名の長さに関わらずカード全体の高さを揃える */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: calc(1.35em * 2);
+}
+/* 2行目: 自治体名（📍付き、1行固定・省略表示） */
+.fl-product-municipality {
+  margin: 0;
+  padding: 0 10px 10px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 商品詳細モーダル（オーバーレイ・パネル・閉じるボタンは共通Modalコンポーネントの ds-modal-* を利用） */
+.fl-modal-media {
+  position: relative;
+  margin: 0 0 16px;
+}
+.fl-modal-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 280px;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+}
+.fl-modal-photo.fl-image-placeholder {
+  font-size: 0.9rem;
+}
+.fl-modal-badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.fl-modal-name {
+  margin: 0 0 14px;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+.fl-modal-meta {
+  margin: 0 0 16px;
+}
+.fl-modal-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--border);
+  font-size: 0.88rem;
+}
+.fl-modal-meta-row dt {
+  color: var(--muted);
+}
+.fl-modal-meta-row dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}
+.fl-modal-insight {
+  background: var(--food-loss-soft);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 18px;
+}
+.fl-modal-insight-label {
+  margin: 0 0 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--food-loss-green-dark);
+}
+.fl-modal-insight-text {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.fl-modal-block {
+  margin-bottom: 18px;
+}
+.fl-modal-block-title {
+  margin: 0 0 10px;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+.fl-modal-reason-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.fl-modal-reason-grid .ds-info-card {
+  padding: 10px 8px;
+}
+.fl-modal-reason-grid .ds-info-card-title {
+  font-size: 0.72rem;
+}
+.fl-modal-reason-grid .ds-info-card-body {
+  display: none;
+}
+.fl-modal-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.fl-modal-suggestion-chip {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.fl-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+.fl-modal-actions-sub {
+  display: flex;
+  gap: 10px;
+}
+.fl-modal-actions-sub > * {
+  flex: 1;
+}
+
+/* 最下部の締めメッセージ */
+.fl-closing {
+  text-align: center;
+  padding-top: 28px;
+  border-top: 1px dashed var(--border);
+}
+.fl-closing-title {
+  margin: 0 0 16px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.6;
+}
+.fl-closing-body {
+  margin: 0 0 24px;
+  color: var(--text);
+  line-height: 1.9;
+  font-size: 0.92rem;
 }
 
 /* ===== スマホ最適化（〜640px） ===== */
@@ -1059,20 +1613,6 @@ button.primary,
     font-size: 0.9rem;
   }
 
-  /* 食品ロス導線バナー（カード。ラベルは省略せず、余白のみ詰める） */
-  .food-loss-banner .bg-image-content {
-    padding: 12px 14px;
-  }
-  .food-loss-banner-title {
-    font-size: 1.15rem;
-  }
-  .food-loss-banner-body {
-    font-size: 0.8rem;
-  }
-  .recipe-footer-banner .bg-image-content {
-    padding: 10px 14px;
-  }
-
   /* ヒーロー */
   .hero {
     min-height: 300px;
@@ -1104,31 +1644,29 @@ button.primary,
     font-size: 1.1rem;
   }
 
-  /* レシピ一覧: 画像左・本文右の横並びカードで一覧性を上げる */
+  /* レシピ一覧: 写真主役の縦積みカードのまま、1列で表示 */
   .recipe-list {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 14px;
   }
-  .recipe-card {
-    flex-direction: row;
+  .recipe-list-stats {
+    gap: 8px;
   }
-  .recipe-card img {
-    width: 116px;
-    height: auto;
-    align-self: stretch;
-    object-fit: cover;
-  }
-  .recipe-card-body {
-    flex: 1;
-    min-width: 0;
+  .recipe-card-img,
+  .ds-image-fallback.recipe-card-img {
+    height: 190px;
   }
 
   /* 材料は1列に */
   .ingredient-list {
     grid-template-columns: 1fr;
   }
-  .detail-image {
-    max-height: 220px;
+  .recipe-hero-img,
+  .ds-image-fallback.recipe-hero-img {
+    height: 220px;
+  }
+  .recipe-related-list {
+    grid-template-columns: 1fr 1fr;
   }
 
   /* 気分は2×2 */
@@ -1146,16 +1684,378 @@ button.primary,
     width: 100%;
   }
 
-  /* PDF/LINE ボタンは縦積みで押しやすく */
+  /* PDF/LINE/楽天レシピ ボタンは縦積みで押しやすく */
   .detail-actions {
     flex-direction: column;
   }
-  .action-btn {
+  .detail-actions > * {
     flex: 1 1 auto;
     width: 100%;
   }
-  .rakuten-link {
-    display: block;
-    text-align: center;
+
+  /* 食品ロス特設ページ */
+  .fl-card {
+    padding: 16px;
   }
+  .fl-impact-stats {
+    padding: 14px 16px;
+  }
+  .fl-household-split {
+    gap: 8px;
+  }
+  .fl-household-card {
+    padding: 14px 8px;
+  }
+  .fl-reason-grid {
+    grid-template-columns: 1fr;
+    padding: 0 16px 16px;
+  }
+  .fl-product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+  }
+  .fl-modal-reason-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =====================================================================
+   デザインシステム 共通コンポーネント（Button/Card/Badge/SectionHeader/
+   StatCard/FeatureCard/IconList/CtaBanner/Modal/InfoCard）
+   トップページ/レシピ一覧/レシピ詳細/食品ロス特集/商品詳細ポップアップで共通利用する。
+   ===================================================================== */
+
+/* ----- Button ----- */
+.ds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.15s, border-color 0.15s, transform 0.08s, box-shadow 0.15s;
+}
+.ds-btn:active { transform: scale(0.97); }
+.ds-btn:disabled { background: #bcbcbc; color: #fff; cursor: not-allowed; }
+.ds-btn-md { height: 44px; padding: 0 22px; font-size: 0.92rem; }
+.ds-btn-lg { height: 56px; padding: 0 32px; font-size: 1.02rem; }
+.ds-btn-full { width: 100%; }
+.ds-btn-icon { display: inline-flex; font-size: 1.05em; }
+.ds-btn-primary { background: var(--accent); color: #fff; box-shadow: var(--shadow-sm); }
+.ds-btn-primary:hover:not(:disabled) { background: var(--accent-dark); }
+.ds-btn-secondary { background: #fff; color: var(--accent-dark); border: 2px solid var(--accent); }
+.ds-btn-secondary:hover:not(:disabled) { background: var(--accent-soft); }
+.ds-btn-ghost { background: transparent; color: var(--muted); }
+.ds-btn-ghost:hover:not(:disabled) { color: var(--accent-dark); background: var(--accent-soft); }
+.ds-btn-line { background: #06c755; color: #fff; }
+.ds-btn-line:hover:not(:disabled) { background: #05a948; }
+
+/* ----- Card ----- */
+.ds-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.ds-card-pad-none { padding: 0; }
+.ds-card-pad-sm { padding: 14px; }
+.ds-card-pad-md { padding: 22px; }
+.ds-card-pad-lg { padding: 32px; }
+.ds-card-interactive {
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.ds-card-interactive:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.ds-card-interactive:active { transform: scale(0.98); }
+
+/* ----- Badge ----- */
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+.ds-badge-icon { line-height: 1; }
+.ds-badge-bargain { background: var(--badge-bargain-bg); color: var(--badge-bargain-text); }
+.ds-badge-popular { background: var(--badge-popular-bg); color: var(--badge-popular-text); }
+.ds-badge-limited { background: var(--badge-limited-bg); color: var(--badge-limited-text); }
+.ds-badge-local { background: var(--badge-local-bg); color: var(--badge-local-text); }
+.ds-badge-special {
+  background: var(--badge-special-bg);
+  color: var(--badge-special-text);
+}
+.ds-badge-neutral { background: var(--bg-warm-deep); color: var(--muted); }
+
+/* ----- SectionHeader ----- */
+.ds-section-header { margin-bottom: 22px; }
+.ds-align-center { text-align: center; }
+.ds-section-eyebrow {
+  display: inline-block;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  padding: 4px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 0.02em;
+}
+.ds-section-title {
+  margin: 0 0 8px;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.4;
+}
+.ds-section-subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.75;
+}
+
+/* ----- StatCard ----- */
+.ds-stat-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 16px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.ds-stat-card-accent { background: var(--accent-soft); border-color: transparent; }
+.ds-stat-icon { display: block; font-size: 1.6rem; margin-bottom: 6px; }
+.ds-stat-value { margin: 0 0 4px; font-size: 1.65rem; font-weight: 800; color: var(--accent-dark); }
+.ds-stat-label { margin: 0; color: var(--muted); font-size: 0.8rem; line-height: 1.5; }
+
+/* ----- FeatureCard ----- */
+.ds-feature-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 6px;
+}
+.ds-feature-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+.ds-feature-title { margin: 0; font-weight: 700; font-size: 0.85rem; color: var(--text); }
+.ds-feature-body { margin: 0; font-size: 0.76rem; color: var(--muted); line-height: 1.5; }
+
+/* ----- IconList ----- */
+.ds-icon-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ds-icon-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.65;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+.ds-icon-list-icon { flex: 0 0 auto; }
+
+/* ----- ImageWithFallback ----- */
+.ds-image-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 100px;
+  background: linear-gradient(135deg, #eafbf1 0%, #d3f3e0 100%);
+  color: var(--food-loss-green-dark);
+  font-size: 2rem;
+}
+
+/* ----- CtaBanner ----- */
+.ds-cta-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, #eafbf1 0%, #ffffff 65%);
+  border: 1px solid rgba(34, 197, 94, 0.15);
+  animation: fadeInUp 0.5s ease-out;
+}
+.ds-cta-banner-hero { padding: 32px; margin: 24px 0 20px; }
+.ds-cta-banner-compact { padding: 22px; margin-top: 28px; gap: 20px; }
+.ds-cta-banner-text { flex: 1; min-width: 0; }
+
+/* 写真自体にタイトル・CTAがデザインされている場合: テキストを重ねず、写真全体をボタン化する */
+.ds-cta-banner-photo {
+  display: block;
+  width: 100%;
+  margin: 24px 0 20px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.ds-cta-banner-photo:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+.ds-cta-banner-photo:active {
+  transform: scale(0.99);
+}
+.ds-cta-banner-photo-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-size: 2.5rem;
+}
+.ds-cta-banner-eyebrow {
+  display: inline-block;
+  background: var(--badge-special-bg);
+  color: var(--badge-special-text);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 0.03em;
+}
+.ds-cta-banner-title { margin: 0 0 10px; font-size: 1.4rem; font-weight: 800; color: var(--text); line-height: 1.45; }
+.ds-cta-banner-compact .ds-cta-banner-title { font-size: 1.1rem; }
+.ds-cta-banner-body { margin: 0 0 18px; color: var(--muted); line-height: 1.75; font-size: 0.9rem; white-space: pre-line; }
+.ds-cta-banner-features { display: flex; gap: 18px; margin-bottom: 22px; flex-wrap: wrap; }
+.ds-cta-banner-feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: var(--text);
+  text-align: center;
+  max-width: 84px;
+}
+.ds-cta-banner-feature-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: var(--shadow-sm);
+}
+.ds-cta-banner-image {
+  flex: 0 0 220px;
+  align-self: stretch;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.ds-cta-banner-img,
+.ds-cta-banner-image .ds-image-fallback {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  object-fit: cover;
+}
+
+/* ----- Modal ----- */
+.ds-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 16, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 200;
+  overflow-y: auto;
+}
+.ds-modal {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--panel);
+  border-radius: var(--radius-xl);
+  padding: 26px;
+  box-shadow: var(--shadow-lg);
+  animation: fadeInUp 0.25s ease-out;
+}
+.ds-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* ----- InfoCard ----- */
+.ds-info-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+}
+.ds-info-card-accent { background: var(--accent-soft); border-color: transparent; }
+.ds-info-card-icon { display: block; font-size: 1.6rem; margin-bottom: 8px; }
+.ds-info-card-title { margin: 0 0 4px; font-weight: 700; font-size: 0.86rem; color: var(--text); }
+.ds-info-card-body { margin: 0; font-size: 0.76rem; color: var(--muted); line-height: 1.55; }
+
+/* ----- デザインシステム レスポンシブ（〜640px） ----- */
+@media (max-width: 640px) {
+  .ds-cta-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ds-cta-banner-hero { padding: 20px; }
+  .ds-cta-banner-compact { padding: 16px; }
+  .ds-cta-banner-image {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 150px;
+    order: -1;
+  }
+  .ds-cta-banner-img,
+  .ds-cta-banner-image .ds-image-fallback { min-height: 150px; }
+  .ds-cta-banner-features { gap: 12px; margin-bottom: 18px; }
+  .ds-section-title { font-size: 1.2rem; }
+  .ds-modal { padding: 20px; }
 }

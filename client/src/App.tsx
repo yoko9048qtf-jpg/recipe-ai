@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
+import FoodLossHero from "./components/FoodLossHero";
 import FoodLossBanner from "./components/FoodLossBanner";
 import Footer from "./components/Footer";
 import IngredientInput from "./components/IngredientInput";
@@ -105,6 +106,7 @@ export default function App() {
     <>
       <Header onLogoClick={handleGoHome} onFoodLossClick={handleFoodLossClick} />
       {view === "input" && <Hero />}
+      {view === "food-loss" && <FoodLossHero />}
 
       <div className="app">
         {error && <div className="banner-error">{error}</div>}
@@ -122,11 +124,14 @@ export default function App() {
               <button type="button" className="back" onClick={() => setView("input")}>
                 ← 食材の入力に戻る
               </button>
-              <h1>おすすめレシピ</h1>
+              <h1>今日のおすすめレシピ 🌿</h1>
               {loading ? (
                 <p className="loading">読み込み中…</p>
               ) : (
-                <RecipeList recipes={recipes} onSelect={handleSelect} />
+                <>
+                  <RecipeList recipes={recipes} onSelect={handleSelect} />
+                  <FoodLossBanner onCtaClick={handleFoodLossClick} />
+                </>
               )}
             </div>
           )}
@@ -136,7 +141,9 @@ export default function App() {
               detail={selected}
               servings={servings}
               have={haveIngredients}
+              relatedRecipes={recipes}
               onBack={() => setView("list")}
+              onSelectRelated={handleSelect}
               onFoodLossClick={handleFoodLossClick}
             />
           )}

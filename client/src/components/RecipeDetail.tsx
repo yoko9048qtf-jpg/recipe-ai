@@ -2,12 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import type { Recipe, DetailIngredient } from "../types";
 import { fetchRecipeDetail } from "../api";
 import RecipeFooterBanner from "./RecipeFooterBanner";
+import { Button, Badge } from "./common";
+import { guessCategoryLabel } from "../utils/recipeDisplayMeta";
 
 interface Props {
   detail: Recipe;
   servings: number;
   have: string[];
+  relatedRecipes: Recipe[];
   onBack: () => void;
+  onSelectRelated: (recipe: Recipe) => void;
   onFoodLossClick: () => void;
 }
 
@@ -19,14 +23,28 @@ export default function RecipeDetailView({
   detail,
   servings,
   have,
+  relatedRecipes,
   onBack,
+  onSelectRelated,
   onFoodLossClick,
 }: Props) {
   const [ingredients, setIngredients] = useState<DetailIngredient[]>([]);
   const [steps, setSteps] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [checkedShopping, setCheckedShopping] = useState<Set<string>>(new Set());
   const printRef = useRef<HTMLDivElement>(null);
+
+  function toggleShoppingItem(key: string) {
+    setCheckedShopping((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  const related = relatedRecipes.filter((r) => r.id !== detail.id).slice(0, 3);
 
   useEffect(() => {
     let active = true;
@@ -34,6 +52,7 @@ export default function RecipeDetailView({
     setError("");
     setIngredients([]);
     setSteps([]);
+    setCheckedShopping(new Set());
     fetchRecipeDetail(detail.title, detail.materials, servings, have)
       .then((data) => {
         if (!active) return;
@@ -167,20 +186,29 @@ export default function RecipeDetailView({
       </button>
 
       <div ref={printRef} className="recipe-printable">
-        <h1>{detail.title}</h1>
-        {detail.image ? (
-          <img
-            className="detail-image no-pdf"
-            src={detail.image}
-            alt={detail.title}
-            onError={hideOnError}
-          />
-        ) : null}
+        <div className="recipe-hero">
+          {detail.image ? (
+            <img
+              className="recipe-hero-img no-pdf"
+              src={detail.image}
+              alt={detail.title}
+              onError={hideOnError}
+            />
+          ) : (
+            <div className="ds-image-fallback recipe-hero-img no-pdf" role="img" aria-label={detail.title}>
+              <span>🍳</span>
+            </div>
+          )}
+          <div className="recipe-hero-meta-overlay no-pdf">
+            <span className="recipe-hero-chip">🍽 {servings}人分</span>
+            {detail.indication ? <span className="recipe-hero-chip">⏱ {detail.indication}</span> : null}
+            {detail.cost ? <span className="recipe-hero-chip">💰 {detail.cost}</span> : null}
+          </div>
+        </div>
 
-        <div className="meta">
-          <span>🍽 {servings}人分</span>
-          {detail.indication ? <span>⏱ {detail.indication}</span> : null}
-          {detail.cost ? <span>💰 {detail.cost}</span> : null}
+        <div className="recipe-detail-heading">
+          <Badge tone="neutral">{guessCategoryLabel(detail.title)}</Badge>
+          <h1>{detail.title}</h1>
         </div>
 
         {loading && <p className="loading">{servings}人分のレシピを作成しています…</p>}
@@ -208,12 +236,24 @@ export default function RecipeDetailView({
                 <p className="all-set">調味料以外はすべてそろっています！🎉</p>
               ) : (
                 <ul className="shopping-list">
-                  {missing.map((it, i) => (
-                    <li key={`${it.name}-${i}`}>
-                      🛒 {it.name}
-                      <span className="ing-amount">{it.amount}</span>
-                    </li>
-                  ))}
+                  {missing.map((it, i) => {
+                    const key = `${it.name}-${i}`;
+                    const checked = checkedShopping.has(key);
+                    return (
+                      <li key={key} className={checked ? "shopping-checked" : ""}>
+                        <label className="shopping-check-label">
+                          <input
+                            type="checkbox"
+                            className="no-pdf"
+                            checked={checked}
+                            onChange={() => toggleShoppingItem(key)}
+                          />
+                          🛒 {it.name}
+                        </label>
+                        <span className="ing-amount">{it.amount}</span>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </section>
@@ -241,21 +281,46 @@ export default function RecipeDetailView({
         )}
       </div>
 
+      {related.length > 0 && (
+        <section className="recipe-related">
+          <h3 className="recipe-related-title">使える食材で検索した関連レシピ</h3>
+          <div className="recipe-related-list">
+            {related.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                className="recipe-related-item"
+                onClick={() => onSelectRelated(r)}
+              >
+                {r.image ? (
+                  <img src={r.image} alt={r.title} loading="lazy" />
+                ) : (
+                  <div className="ds-image-fallback recipe-related-img" role="img" aria-label={r.title}>
+                    <span>🍳</span>
+                  </div>
+                )}
+                <span className="recipe-related-item-title">{r.title}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
       <div className="detail-actions">
-        <button type="button" className="action-btn pdf-btn" onClick={handlePdf} disabled={!ready}>
-          📄 PDFを表示
-        </button>
-        <button type="button" className="action-btn line-btn" onClick={handleLine} disabled={!ready}>
+        <Button variant="secondary" onClick={handlePdf} disabled={!ready}>
+          📄 PDF表示
+        </Button>
+        <Button variant="secondary" onClick={handleLine} disabled={!ready}>
           💬 LINEで共有
-        </button>
+        </Button>
+        <Button as="a" variant="secondary" href={detail.url} target="_blank" rel="noreferrer">
+          🍳 楽天レシピを見る ↗
+        </Button>
       </div>
 
       <p className="hint">
         ※ 材料の分量と手順は、AIが{servings}人分に合わせて生成した参考情報です。正確な作り方は元のレシピをご確認ください。
       </p>
-      <a className="rakuten-link" href={detail.url} target="_blank" rel="noreferrer">
-        楽天レシピで元のレシピを見る ↗
-      </a>
 
       <RecipeFooterBanner onCtaClick={onFoodLossClick} />
     </div>

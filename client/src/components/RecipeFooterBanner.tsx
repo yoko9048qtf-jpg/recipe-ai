@@ -1,4 +1,4 @@
-import BackgroundImage from "./BackgroundImage";
+import { CtaBanner } from "./common";
 import {
   FOOD_LOSS_RECIPE_BANNER_TITLE,
   FOOD_LOSS_RECIPE_BANNER_BODY,
@@ -9,19 +9,15 @@ interface Props {
   onCtaClick: () => void;
 }
 
-/** レシピ回答ページ最下部の、食品ロス特設ページへの導線バナー（ヒーロー直下バナーより控えめ） */
+/** レシピ回答ページ最下部の、食品ロス特設ページへの導線バナー（コンパクト表示） */
 export default function RecipeFooterBanner({ onCtaClick }: Props) {
   return (
-    <BackgroundImage className="recipe-footer-banner">
-      <h2 className="recipe-footer-banner-title">{FOOD_LOSS_RECIPE_BANNER_TITLE}</h2>
-      <p className="recipe-footer-banner-body">{FOOD_LOSS_RECIPE_BANNER_BODY}</p>
-      <button
-        type="button"
-        className="food-loss-banner-cta recipe-footer-banner-cta"
-        onClick={onCtaClick}
-      >
-        {FOOD_LOSS_BANNER_CTA}
-      </button>
-    </BackgroundImage>
+    <CtaBanner
+      size="compact"
+      title={FOOD_LOSS_RECIPE_BANNER_TITLE}
+      body={FOOD_LOSS_RECIPE_BANNER_BODY}
+      ctaLabel={FOOD_LOSS_BANNER_CTA}
+      onCtaClick={onCtaClick}
+    />
   );
 }

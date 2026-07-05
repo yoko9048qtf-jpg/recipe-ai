@@ -1,4 +1,6 @@
 import type { Recipe } from "../types";
+import RecipeCard from "./RecipeCard";
+import { pickAiRecommendedId } from "../utils/recipeDisplayMeta";
 
 interface Props {
   recipes: Recipe[];
@@ -14,27 +16,26 @@ export default function RecipeList({ recipes, onSelect }: Props) {
     );
   }
 
+  const usableIngredientCount = recipes.length > 0 ? Math.max(...recipes.map((r) => r.usedCount)) : 0;
+  const aiPickId = pickAiRecommendedId(recipes);
+
   return (
-    <div className="recipe-list">
-      {recipes.map((r) => (
-        <button key={r.id} type="button" className="recipe-card" onClick={() => onSelect(r)}>
-          {r.image ? <img src={r.image} alt={r.title} loading="lazy" /> : null}
-          <div className="recipe-card-body">
-            <h2>{r.title}</h2>
-            <div className="badges">
-              <span className="badge have">使える食材 {r.usedCount}</span>
-              <span className="badge missing">不足 {r.missedCount}</span>
-            </div>
-            {r.indication && <p className="missing-preview">⏱ {r.indication}</p>}
-            {r.missingMaterials.length > 0 && (
-              <p className="missing-preview">
-                不足: {r.missingMaterials.slice(0, 5).join("、")}
-                {r.missingMaterials.length > 5 ? " ほか" : ""}
-              </p>
-            )}
-          </div>
-        </button>
-      ))}
-    </div>
+    <>
+      <div className="recipe-list-stats">
+        <div className="recipe-list-stat">
+          <span className="recipe-list-stat-value">{usableIngredientCount}</span>
+          <span className="recipe-list-stat-label">使える食材</span>
+        </div>
+        <div className="recipe-list-stat">
+          <span className="recipe-list-stat-value">{recipes.length}</span>
+          <span className="recipe-list-stat-label">おすすめレシピ</span>
+        </div>
+      </div>
+      <div className="recipe-list">
+        {recipes.map((r) => (
+          <RecipeCard key={r.id} recipe={r} isAiPick={r.id === aiPickId} onSelect={onSelect} />
+        ))}
+      </div>
+    </>
   );
 }

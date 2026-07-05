@@ -1,5 +1,6 @@
 import express from "express";
 import { getRankings } from "./rakuten.js";
+import { searchFoodLossProducts, mapRakutenItemToProduct } from "./rakutenIchiba.js";
 import { detectIngredients } from "./vision.js";
 import { generateRecipeDetail } from "./steps.js";
 import { fisherYatesShuffle } from "./utils/shuffle.js";
@@ -123,10 +124,16 @@ function isAvailableJa(line, haveList) {
 function errorMessage(err) {
   const m = err?.message || "";
   if (/RAKUTEN_|applicationId|accessKey|REFERRER|403|認証/i.test(m)) {
-    return `楽天レシピAPIにアクセスできません（${m}）。環境変数のキーと許可ドメイン設定を確認してください。`;
+    return `楽天APIにアクセスできません（${m}）。環境変数のキーと許可ドメイン設定を確認してください。`;
   }
   return m || "サーバーエラーが発生しました。";
 }
+
+const VALID_FOOD_TYPES = ["meat", "seafood", "vegetable", "fruit", "processed"];
+const VALID_REGIONS = [
+  "hokkaido", "tohoku", "kanto", "chubu", "kinki", "chugoku-shikoku", "kyushu-okinawa",
+];
+const VALID_PRICE_RANGES = ["under-5000", "5001-10000", "10001-30000", "over-30001"];
 
 // --- おすすめレシピ（ジャンル人気 + 冷蔵庫の食材で並べ替え・不足材料注記） ---
 app.post("/api/recipes", async (req, res) => {
@@ -292,6 +299,40 @@ app.post("/api/detect-ingredients", async (req, res) => {
     }
     const ingredients = await detectIngredients(image);
     res.json({ ingredients });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: errorMessage(err) });
+  }
+});
+
+// --- 食品ロス特設ページ: ふるさと納税商品検索（楽天市場API） ---
+app.get("/api/food-loss-products", async (req, res) => {
+  try {
+    const kind = req.query.kind;
+    const filter = { kind };
+
+    if (kind === "food-type") {
+      if (!VALID_FOOD_TYPES.includes(req.query.foodType)) {
+        return res.status(400).json({ error: "foodTypeの指定が不正です。" });
+      }
+      filter.foodType = req.query.foodType;
+    } else if (kind === "region") {
+      if (!VALID_REGIONS.includes(req.query.region)) {
+        return res.status(400).json({ error: "regionの指定が不正です。" });
+      }
+      filter.region = req.query.region;
+    } else if (kind === "price") {
+      if (!VALID_PRICE_RANGES.includes(req.query.priceRange)) {
+        return res.status(400).json({ error: "priceRangeの指定が不正です。" });
+      }
+      filter.priceRange = req.query.priceRange;
+    } else {
+      return res.status(400).json({ error: "kindの指定が不正です。" });
+    }
+
+    const items = await searchFoodLossProducts(filter);
+    const products = items.map((item) => mapRakutenItemToProduct(item, filter));
+    res.json({ products });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: errorMessage(err) });
